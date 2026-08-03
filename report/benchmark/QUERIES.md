@@ -1,7 +1,7 @@
 # Bộ câu hỏi đánh giá — bảng cho REPORT_NHOM.md §3
 
 > Nguồn máy đọc được: [`data/benchmark_queries.yaml`](../../data/benchmark_queries.yaml).
-> Corpus: [`data/hoc-vu-01821/`](../../data/hoc-vu-01821) (10 tài liệu).
+> Corpus: [`data/k3_university/`](../../data/k3_university) (10 tài liệu).
 > Bản nháp của R4 trên corpus cá nhân — R3 chốt bộ chính thức của nhóm.
 
 | # | Câu hỏi | Câu trả lời chuẩn (rút gọn) | Tài liệu / mục chứa thông tin |
@@ -38,4 +38,4 @@ trường duy nhất thì có thể bỏ tên trường và câu hỏi sẽ tự
 
 Q2 phụ thuộc vào việc corpus giữ tài liệu `audience` khác `student`. Nếu bộ tài liệu của
 nhóm chỉ toàn `audience: student`, bộ lọc không loại đi gì và câu hỏi mất ý nghĩa —
-xem [PROVENANCE](../../data/PROVENANCE-hoc-vu-01821.md).
+xem [PROVENANCE](../../data/PROVENANCE-k3_university.md).

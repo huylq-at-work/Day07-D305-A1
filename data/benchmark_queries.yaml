@@ -1,6 +1,6 @@
 # Bộ câu hỏi đánh giá — Bài tập 3.2, định dạng theo docs/CONTRACTS.md §2
 #
-# Corpus: data/hoc-vu-01821/ (10 tài liệu, chủ đề học vụ / đăng ký học phần)
+# Corpus: data/k3_university/ (10 tài liệu, chủ đề học vụ / đăng ký học phần)
 # Trạng thái: BẢN NHÁP của R4 trên corpus cá nhân. Bộ chính thức của nhóm do R3 chốt
 #             trên corpus của R1; file này là đề xuất để R3 lấy làm điểm xuất phát.
 #

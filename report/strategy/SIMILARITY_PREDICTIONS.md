@@ -4,7 +4,7 @@
 > xong; commit này cố định phần dự đoán để không sửa lùi sau khi thấy kết quả.
 >
 > Embedder: `sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2` (`EMBEDDING_PROVIDER=local`).
-> Năm cặp câu lấy trong miền học vụ của corpus [`data/hoc-vu-01821/`](../../data/hoc-vu-01821).
+> Năm cặp câu lấy trong miền học vụ của corpus [`data/k3_university/`](../../data/k3_university).
 
 ## Năm cặp câu
 

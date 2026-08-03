@@ -1,7 +1,7 @@
 ﻿# Provenance — corpus học vụ / đăng ký học phần
 
 > Corpus cá nhân, thu thập theo [docs/DATA_COLLECTION.md](../docs/DATA_COLLECTION.md).
-> Kiểm kê máy đọc được: [`sources.csv`](hoc-vu-01821/sources.csv). Danh sách URL đầu vào:
+> Kiểm kê máy đọc được: [`sources.csv`](k3_university/sources.csv). Danh sách URL đầu vào:
 > [`../urls.csv`](urls.csv).
 
 ## Phạm vi
@@ -92,7 +92,7 @@ giống nhau và cạnh tranh trực tiếp với chunk nội dung ở top-3.
 ## Chạy lại
 
 ```bash
-python scripts\fetch_public_pages.py data\urls.csv --output-dir data\hoc-vu-01821 --delay 1.5 --overwrite
+python scripts\fetch_public_pages.py data\urls.csv --output-dir data\k3_university --delay 1.5 --overwrite
 ```
 
 Crawler chờ 1,5 giây giữa các request, khai `User-Agent` cố định, chỉ nhận `text/html` và

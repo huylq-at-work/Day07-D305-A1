@@ -1,6 +1,6 @@
 ---
 doc_id: "vnuf-huong-dan-quy-che-tin-chi"
-title: "Huong dan thuc hien quy che dao tao theo he thong tin chi VNUF"
+title: "Hướng dẫn thực hiện quy chế đào tạo theo hệ thống tín chỉ (ĐH Lâm nghiệp)"
 source_url: "https://vnuf.edu.vn/huong-dan-thuc-hien-quy-che-dao-tao-dai-hoc-cao-dang-he-chinh-quy-theo-he-thong-tin-chi.html"
 retrieved_at: "2026-08-03"
 document_version: "not-stated"
@@ -10,7 +10,7 @@ category: "academic-regulation"
 language: "vi"
 ---
 
-# Huong dan thuc hien quy che dao tao theo he thong tin chi VNUF
+# Hướng dẫn thực hiện quy chế đào tạo theo hệ thống tín chỉ (ĐH Lâm nghiệp)
 
 HƯỚNG DẪN THỰC HIỆN QUY CHẾ ĐÀO TẠO ĐẠI HỌC VÀ CAO ĐẲNG HỆ CHÍNH QUY THEO HỆ THỐNG TÍN CHỈ
 

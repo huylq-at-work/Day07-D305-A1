@@ -1,6 +1,6 @@
 ---
 doc_id: "iuh-huong-dan-dang-ky-hoc-phan"
-title: "Huong dan dang ky hoc phan IUH"
+title: "Hướng dẫn đăng ký học phần (ĐH Công nghiệp TP.HCM)"
 source_url: "https://camnang.iuh.edu.vn/huong-dan-dang-ky-hoc-phan.php"
 retrieved_at: "2026-08-03"
 document_version: "not-stated"
@@ -10,7 +10,7 @@ category: "course-registration"
 language: "vi"
 ---
 
-# Huong dan dang ky hoc phan IUH
+# Hướng dẫn đăng ký học phần (ĐH Công nghiệp TP.HCM)
 
 Hướng dẫn đăng ký học phần - Cẩm nang người học | Đại học Công nghiệp Thành phố Hồ Chí Minh
 

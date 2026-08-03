@@ -1,6 +1,6 @@
 ---
 doc_id: "ueh-dang-ky-huy-hoc-phan"
-title: "Quy dinh dang ky va huy hoc phan UEH"
+title: "Quy định đăng ký và hủy học phần đã đăng ký (UEH)"
 source_url: "https://daotao.ueh.edu.vn/quy-dinh-dang-ky-va-huy-hoc-phan-da-dang-ky-cua-sinh-vien-dai-hoc-chinh-quy-trong-dao-tao-theo-he-thong-tin-chi-tai-truong-dai-hoc-kinh-te-tp-ho-chi-minh/"
 retrieved_at: "2026-08-03"
 document_version: "not-stated"
@@ -10,7 +10,7 @@ category: "course-registration"
 language: "vi"
 ---
 
-# Quy dinh dang ky va huy hoc phan UEH
+# Quy định đăng ký và hủy học phần đã đăng ký (UEH)
 
 QUY ĐỊNH
 
