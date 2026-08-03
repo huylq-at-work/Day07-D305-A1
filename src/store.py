@@ -59,13 +59,15 @@ class EmbeddingStore:
 
     def _make_record(self, doc: Document) -> dict[str, Any]:
         """Chuẩn hoá một Document thành bản ghi lưu trữ (nhúng đúng MỘT lần)."""
+        metadata = dict(doc.metadata or {})
+        metadata.setdefault("doc_id", doc.id)
         record = {
             "index": self._next_index,
             "id": doc.id,
             "content": doc.content,
             # Copy để store không dùng chung dict với Document bên ngoài:
             # người gọi sửa metadata sau đó sẽ không âm thầm đổi dữ liệu đã nạp.
-            "metadata": dict(doc.metadata or {}),
+            "metadata": metadata,
             "embedding": self._embedding_fn(doc.content),
         }
         self._next_index += 1
