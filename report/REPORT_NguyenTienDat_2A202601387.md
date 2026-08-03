@@ -161,7 +161,7 @@ Chạy **5 câu hỏi đánh giá của nhóm** trên mã nguồn cá nhân củ
 **Bao nhiêu câu hỏi trả về chunk có liên quan trong top-3?** 1 / 5
 
 **Điều hay nhất tôi học được từ thành viên khác / nhóm khác (qua demo):**
-> *Qua quá trình làm việc nhóm, tôi nhận ra rằng không có một chiến lược Chunking nào là hoàn hảo tuyệt đối cho mọi loại tài liệu. Sự kết hợp giữa chia nhỏ theo ngữ nghĩa (câu/đoạn) và có metadata filter chặt chẽ mới là chìa khóa giúp AI không bị "ảo giác" khi bơi trong một bể dữ liệu quá lớn.*
+> Qua quá trình làm việc nhóm, tôi nhận ra rằng không có một chiến lược Chunking nào là hoàn hảo tuyệt đối cho mọi loại tài liệu. Sự kết hợp giữa chia nhỏ theo ngữ nghĩa (câu/đoạn) và có metadata filter chặt chẽ mới là chìa khóa giúp AI không bị "ảo giác" khi bơi trong một bể dữ liệu quá lớn.
 
 ---
 
