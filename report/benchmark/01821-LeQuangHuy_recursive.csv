@@ -2,8 +2,8 @@
 # corpus=data/k3_university chunks=456 docs=10
 # queries=data/benchmark_queries.yaml top_k=3 branch=01821-LeQuangHuy
 query_id,member_branch,strategy,params,n_chunks_total,rank_of_gold,hit_top3,top1_score,top1_doc_id,top3_doc_ids,rubric_score
-Q1,01821-LeQuangHuy,recursive,chunk_size=500,456,7,false,0.7026,ueh-dang-ky-huy-hoc-phan,ueh-dang-ky-huy-hoc-phan|vnuf-huong-dan-quy-che-tin-chi|vnuf-huong-dan-quy-che-tin-chi,0
-Q2,01821-LeQuangHuy,recursive,chunk_size=500,456,5,false,0.6969,ou-quy-che-hoc-vu-tin-chi,ou-quy-che-hoc-vu-tin-chi|ueh-dang-ky-huy-hoc-phan|ueh-dang-ky-huy-hoc-phan,0
+Q1,01821-LeQuangHuy,recursive,chunk_size=500,456,1,true,0.6469,vinuni-academic-regulations-undergrad,vinuni-academic-regulations-undergrad|vinuni-registrar-policy-index|vinuni-academic-regulations-undergrad,2
+Q2,01821-LeQuangHuy,recursive,chunk_size=500,456,1,true,0.6743,vinuni-academic-regulations-undergrad,vinuni-academic-regulations-undergrad|vinuni-academic-regulations-undergrad|vinuni-academic-regulations-undergrad,2
 Q3,01821-LeQuangHuy,recursive,chunk_size=500,456,6,false,0.7126,vinuni-academic-regulations-undergrad,vinuni-academic-regulations-undergrad|vinuni-leave-of-absence|vinuni-academic-regulations-undergrad,0
-Q4,01821-LeQuangHuy,recursive,chunk_size=500,456,8,false,0.6544,vnuf-huong-dan-quy-che-tin-chi,vnuf-huong-dan-quy-che-tin-chi|ou-quy-che-hoc-vu-tin-chi|ou-quy-che-hoc-vu-tin-chi,0
-Q5,01821-LeQuangHuy,recursive,chunk_size=500,456,99,false,0.7637,vinuni-academic-regulations-undergrad,vinuni-academic-regulations-undergrad|vnuf-huong-dan-quy-che-tin-chi|vinuni-academic-regulations-undergrad,0
+Q4,01821-LeQuangHuy,recursive,chunk_size=500,456,1,true,0.6064,ueh-dang-ky-huy-hoc-phan,ueh-dang-ky-huy-hoc-phan|ueh-dang-ky-huy-hoc-phan|ueh-dang-ky-huy-hoc-phan,2
+Q5,01821-LeQuangHuy,recursive,chunk_size=500,456,5,false,0.7637,vinuni-academic-regulations-undergrad,vinuni-academic-regulations-undergrad|vinuni-academic-regulations-undergrad|vinuni-registrar-policy-index,0

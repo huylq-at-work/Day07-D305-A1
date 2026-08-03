@@ -5,6 +5,7 @@ source_url: "https://vnuf.edu.vn/huong-dan-thuc-hien-quy-che-dao-tao-dai-hoc-cao
 retrieved_at: "2026-08-03"
 document_version: "not-stated"
 audience: "faculty"
+institution: "vnuf"
 department: "dao-tao"
 category: "academic-regulation"
 language: "vi"

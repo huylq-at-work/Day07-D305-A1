@@ -45,6 +45,7 @@ Nội dung đã làm sạch...
 | `doc_id` | ✅ | kebab-case, không dấu, tiền tố `k3-`. Đây là khóa `delete_document()` và mọi bảng đối chiếu dùng |
 | `title` | ✅ | tiếng Việt có dấu, dùng để in trong báo cáo |
 | `audience` | ✅ | đúng một trong `student` \| `faculty` \| `staff` \| `all`. **K3 bắt buộc** |
+| `institution` | ✅ | mã trường viết thường, không dấu (`vinuni`, `ueh`, `iuh`, `vnuf`, `ou`). Thêm ở vòng 2 — xem [FAILURE_ANALYSIS](../report/benchmark/FAILURE_ANALYSIS.md): thiếu trường này thì câu hỏi về trường A bị chunk của trường B chiếm top-1, kéo điểm truy xuất về 0 |
 | `department` | ✅ | đúng một trong `registration` \| `tuition` \| `scholarship` \| `library` \| `dormitory` |
 | `language` | ✅ | `vi` \| `en` |
 | `source_url` | ✅ | URL công khai đầy đủ. Bắt buộc theo `docs/DATA_COLLECTION.md` |

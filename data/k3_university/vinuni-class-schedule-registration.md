@@ -5,6 +5,7 @@ source_url: "https://registrar.vinuni.edu.vn/academics/class-schedule-course-reg
 retrieved_at: "2026-08-03"
 document_version: "not-stated"
 audience: "student"
+institution: "vinuni"
 department: "registrar"
 category: "course-registration"
 language: "en"

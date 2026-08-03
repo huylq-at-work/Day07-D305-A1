@@ -5,6 +5,7 @@ source_url: "https://policy.vinuni.edu.vn/all-policies/credit-transfer-requests/
 retrieved_at: "2026-08-03"
 document_version: "not-stated"
 audience: "student"
+institution: "vinuni"
 department: "academic-affairs"
 category: "credit-transfer"
 language: "en"

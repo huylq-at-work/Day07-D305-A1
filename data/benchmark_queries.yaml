@@ -18,7 +18,8 @@ queries:
       (ii) học kỳ trước không đạt good academic standing và muốn học hơn 18 tín chỉ;
       (iii) muốn đăng ký hơn 22 tín chỉ trong học kỳ chính.
     gold_doc_id: vinuni-academic-regulations-undergrad
-    metadata_filter: null
+    metadata_filter:
+      institution: vinuni
     kind: fact
     note: >-
       Câu hỏi một-chi-tiết, đáp án nằm gọn trong một bảng của Article về study load.
@@ -36,6 +37,7 @@ queries:
     gold_doc_id: vinuni-academic-regulations-undergrad
     metadata_filter:
       audience: student
+      institution: vinuni
     kind: filtered
     note: >-
       Đây là câu bắt buộc của K3 (cần metadata_filter). Không lọc thì tài liệu cạnh tranh
@@ -55,7 +57,8 @@ queries:
       80% nội dung trở lên so với môn tương ứng ở VinUni.
     gold_doc_id: vinuni-credit-transfer
     kind: multi_doc
-    metadata_filter: null
+    metadata_filter:
+      institution: vinuni
     note: >-
       Trần 50% xuất hiện ở CẢ vinuni-credit-transfer (mục 3.2) lẫn
       vinuni-academic-regulations-undergrad (Article 13), nhưng mốc thời gian nộp hồ sơ chỉ
@@ -70,7 +73,8 @@ queries:
       chỉ được tính sau khi đã đóng học phí theo đúng thời gian của khóa/hệ tương ứng.
       (Quy định của Trường Đại học Kinh tế TP.HCM — UEH.)
     gold_doc_id: ueh-dang-ky-huy-hoc-phan
-    metadata_filter: null
+    metadata_filter:
+      institution: ueh
     kind: paraphrase
     note: >-
       Câu hỏi dùng từ đời thường ("mất môn", "nộp tiền học"), văn bản dùng từ hành chính
@@ -90,7 +94,8 @@ queries:
       sang trạng thái không hoạt động và phải nộp lại hồ sơ qua Office of Admissions.
     gold_doc_id: vinuni-leave-of-absence
     kind: edge
-    metadata_filter: null
+    metadata_filter:
+      institution: vinuni
     note: >-
       Câu duy nhất mà một câu trả lời "đúng" theo nghĩa thông thường vẫn là câu trả lời
       thiếu. Hệ thống truy xuất tốt phải kéo được CẢ HAI tài liệu lên top-3; agent trả lời

@@ -118,6 +118,69 @@ bốn người sẽ cùng nhận 0 điểm vì cùng ba nguyên nhân này.
 
 ---
 
+## Vòng 2 — áp dụng đề xuất số 1: thêm `institution` và lọc theo nó
+
+Đổi **đúng một biến**: thêm trường `institution` vào front matter cả 10 tài liệu, và thêm
+nó vào `metadata_filter` của cả 5 câu hỏi. Corpus, chunker, embedder, câu hỏi, gold answer
+đều giữ nguyên. Số liệu vòng 1 lưu ở
+[`01821-LeQuangHuy_recursive_v1-khong-loc-institution.csv`](01821-LeQuangHuy_recursive_v1-khong-loc-institution.csv).
+
+| # | rank v1 | rank v2 | điểm v1 → v2 |
+| :-: | --: | --: | :-- |
+| Q1 | 7 | **1** | 0 → 2 |
+| Q2 | 5 | **1** | 0 → 2 |
+| Q3 | 6 | 6 | 0 → 0 |
+| Q4 | 8 | **1** | 0 → 2 |
+| Q5 | 99 | 5 | 0 → 0 |
+| | | | **0/10 → 6/10** |
+
+### Nhưng 2 trong 6 điểm đó không đáng tin
+
+Kích thước pool sau khi lọc:
+
+| institution | chunk | tài liệu |
+| :-- | --: | --: |
+| vinuni | 250 | 6 |
+| vnuf | 95 | 1 |
+| ou | 81 | 1 |
+| **ueh** | **23** | **1** |
+| iuh | 7 | 1 |
+
+Q4 lọc `institution=ueh`, mà UEH chỉ có **đúng một tài liệu**. `rank_of_gold` đo ở mức tài
+liệu, nên khi pool chỉ còn một tài liệu thì hạng 1 gần như **được cho không** — chỉ cần
+trả về bất kỳ chunk nào là trúng. Hai điểm của Q4 không chứng minh được truy xuất tốt; nó
+chỉ chứng minh bộ lọc đã thu hẹp bài toán đến mức tầm thường.
+
+Đây là cái bẫy của chính chỉ số: `rank_of_gold` giả định pool đủ lớn để việc xếp đúng hạng
+là thành tựu. Vòng 1 pool là 456 chunk / 10 tài liệu; vòng 2 với Q4 chỉ còn 23 chunk / 1
+tài liệu. So hai con số đó với nhau như thể cùng thang đo là sai.
+
+**Điểm thật đáng tin: Q1 và Q2 (4/10).** Cả hai lọc `institution=vinuni`, pool còn 250
+chunk / 6 tài liệu — vẫn là bài toán thật, và cả hai nhảy từ trượt lên hạng 1. Đây là bằng
+chứng sạch cho luận điểm: **thứ embedding không phân biệt được thì metadata phân biệt được.**
+
+### Hai câu còn trượt đều cùng một nguyên nhân
+
+Q3 (hạng 6) và Q5 (hạng 5) đều lọc `institution=vinuni`, và ở cả hai, tài liệu đứng hạng 1
+là `vinuni-academic-regulations-undergrad` — **không phải** `gold_doc_id` tôi khai, nhưng
+lại là tài liệu **có chứa câu trả lời**:
+
+- Q3: trần 50% xuất hiện ở cả `vinuni-credit-transfer` (mục 3.2) lẫn acad-reg (Article 13).
+- Q5: mốc "một tuần" nằm trong acad-reg, còn "một tháng" nằm trong `vinuni-leave-of-absence`.
+
+Cả hai là câu hỏi có đáp án nằm ở **nhiều tài liệu**, trong khi Contract B chỉ cho khai
+**một** `gold_doc_id`. Máy chấm so đúng một chuỗi nên báo trượt dù truy xuất đã đưa nội dung
+đúng lên hạng 1. Đây là lỗi của thước đo, không phải của hệ thống — và là lý do đề xuất số
+2 (`gold_doc_id` → `gold_doc_ids` dạng danh sách) nên làm ở vòng sau.
+
+### Bài học về phương pháp
+
+Nếu vòng 2 sửa cùng lúc cả `institution` lẫn nhãn gold thì 0/10 → 8/10 sẽ trông rất đẹp mà
+**không giải thích được phần nào đến từ đâu**. Đổi một biến mỗi vòng khiến con số nhỏ hơn
+nhưng nói được nhiều hơn.
+
+---
+
 ## Điều đáng nói nhất
 
 Con số 0/10 **không** có nghĩa là `EmbeddingStore` sai. 42/42 test pass, và smoke test cho
