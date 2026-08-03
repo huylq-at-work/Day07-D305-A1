@@ -167,6 +167,9 @@ def parse_args() -> argparse.Namespace:
 
 
 def main() -> int:
+    if hasattr(sys.stdout, "reconfigure"):
+        sys.stdout.reconfigure(encoding="utf-8")
+
     args = parse_args()
     if args.chunk_size <= 0 or args.heading_max_chars <= 0:
         raise SystemExit("chunk-size và heading-max-chars phải lớn hơn 0")

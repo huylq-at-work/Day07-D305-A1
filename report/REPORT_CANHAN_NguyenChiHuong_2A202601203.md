@@ -1,7 +1,7 @@
 # Báo Cáo Cá Nhân — Lab 7: Embedding & Vector Store
 
 **Họ tên:** Nguyễn Chí Hướng
-**Nhóm:** K3 
+**Nhóm:** A1 
 **Ngày:** 03/08/2026
 
 > **Nộp 1 bản / sinh viên.** Phần nhóm (lựa chọn tài liệu, thiết kế chiến lược, bộ câu hỏi đánh giá, demo) nộp chung 1 bản trong `REPORT_NHOM.md`. Chi tiết thang điểm: `docs/SCORING.md`.
@@ -155,7 +155,7 @@ tests/test_solution.py::TestEmbeddingStoreDeleteDocument::test_delete_reduces_co
 tests/test_solution.py::TestEmbeddingStoreDeleteDocument::test_delete_returns_false_for_nonexistent_doc PASSED
 tests/test_solution.py::TestEmbeddingStoreDeleteDocument::test_delete_returns_true_for_existing_doc PASSED
 
-============================= 42 passed in 0.06s ==============================
+============================= 42 passed in 0.14s ==============================
 ```
 
 **Số lượng bài test vượt qua (pass):** 42 / 42
@@ -164,24 +164,25 @@ tests/test_solution.py::TestEmbeddingStoreDeleteDocument::test_delete_returns_tr
 
 ## 4. Dự đoán độ tương tự (Similarity Predictions) — Cá nhân (5 điểm)
 
-Tôi ghi dự đoán trước khi chạy. Do phần model local là tùy chọn và không được cài trong môi
-trường này, điểm thực tế dưới đây dùng `MockEmbedder` của bài cùng `compute_similarity()`.
-Mock tạo vector xác định theo hash để kiểm tra code, **không** biểu diễn ngữ nghĩa; vì vậy
-kết quả này dùng để chứng minh pipeline tính cosine hoạt động, không dùng để chọn strategy.
+Tôi ghi dự đoán trước khi chạy rồi đo lại bằng backend local
+`sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2` (vector 384 chiều), không dùng
+API và không dùng `MockEmbedder`. Các phép đo đều gọi đúng `compute_similarity()` trong
+`src/chunking.py` trên hai vector đã được model chuẩn hóa.
 
 | Cặp | Câu A | Câu B | Dự đoán | Điểm thực tế | Đúng? |
 |------|-----------|-----------|---------|--------------|-------|
-| 1 | Sinh viên được rút học phần đã đăng ký muộn nhất khi nào? | Hạn chót để sinh viên hủy một môn đã đăng ký là bao giờ? | Cao (`0.85`) | `0.0960` | Không |
-| 2 | Sinh viên được đăng ký tối đa bao nhiêu tín chỉ trong một học kỳ? | What is the maximum number of credits a student may register in one semester? | Cao (`0.75`) | `0.2055` | Không |
-| 3 | Quy định về rút học phần đã đăng ký. | Quy định về chuyển đổi tín chỉ từ trường khác. | Trung bình (`0.55`) | `-0.2007` | Không |
-| 4 | Sinh viên rút học phần đã đăng ký trong học kỳ. | Sinh viên rút tiền mặt tại cây ATM trong khuôn viên trường. | Thấp (`0.35`) | `0.0765` | Có, cùng mức thấp |
-| 5 | Hạn nộp học phí học kỳ 1 là ngày nào? | Công thức nấu phở bò truyền thống của Hà Nội. | Thấp nhất (`0.05`) | `0.1639` | Không, không thấp nhất |
+| 1 | Sinh viên được rút học phần đã đăng ký muộn nhất khi nào? | Hạn chót để sinh viên hủy một môn đã đăng ký là bao giờ? | Cao (`0.85`) | `0.8650` | Có |
+| 2 | Sinh viên được đăng ký tối đa bao nhiêu tín chỉ trong một học kỳ? | What is the maximum number of credits a student may register in one semester? | Cao (`0.75`) | `0.1671` | Không |
+| 3 | Quy định về rút học phần đã đăng ký. | Quy định về chuyển đổi tín chỉ từ trường khác. | Trung bình (`0.55`) | `0.9056` | Không, cao hơn dự đoán |
+| 4 | Sinh viên rút học phần đã đăng ký trong học kỳ. | Sinh viên rút tiền mặt tại cây ATM trong khuôn viên trường. | Thấp (`0.35`) | `0.4928` | Không, ở mức trung bình |
+| 5 | Hạn nộp học phí học kỳ 1 là ngày nào? | Công thức nấu phở bò truyền thống của Hà Nội. | Thấp nhất (`0.05`) | `0.8869` | Không, cao bất thường |
 
 **Kết quả nào bất ngờ nhất? Điều này nói gì về cách embeddings biểu diễn ý nghĩa?**
-> Cặp 1 bất ngờ nhất: hai câu gần như đồng nghĩa nhưng chỉ đạt `0.0960`, trong khi cặp 5
-> hoàn toàn khác chủ đề lại đạt `0.1639`. Điều này không phản ánh cách một semantic embedding
-> tốt biểu diễn ý nghĩa mà cho thấy `MockEmbedder` chỉ tạo vector kiểm thử từ hash; muốn kết
-> luận về ngữ nghĩa phải dùng một backend embedding thật và giữ cùng backend khi so sánh.
+> Cặp 5 bất ngờ nhất: hai câu khác hẳn chủ đề vẫn đạt `0.8869`, trong khi cặp song ngữ cùng hỏi
+> số tín chỉ chỉ đạt `0.1671`. Điều này cho thấy một điểm cosine cao chỉ là tín hiệu xếp hạng
+> trong chính không gian của model, không tự nó chứng minh hai câu có cùng đáp án. Vì vậy khi
+> benchmark tôi kiểm tra chuỗi bằng chứng trong từng chunk, không kết luận từ score hoặc
+> `doc_id` đơn thuần.
 
 ---
 
@@ -190,23 +191,44 @@ kết quả này dùng để chứng minh pipeline tính cosine hoạt động, 
 Chạy **5 câu hỏi đánh giá của nhóm** trên mã nguồn cá nhân của bạn trong gói `src`. **5 câu hỏi này phải trùng với các thành viên cùng nhóm** (xem `REPORT_NHOM.md`).
 
 **Cấu hình đã chạy:** `HeadingChunker(max_level=2, max_chars=1200)`, 10 tài liệu, tổng cộng
-`218` chunk, `top_k=3`, `MockEmbedder`. Năm query lấy nguyên từ
-`data/benchmark_queries.yaml`; tại thời điểm chạy file vẫn là bản nháp, chưa QUERY FREEZE.
-Đây là kết quả cá nhân để kiểm tra pipeline và phân tích failure, **không phải** CSV benchmark
-non-mock chính thức của nhóm.
+`218` chunk, `top_k=3`, backend local
+`sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2`. Năm query lấy nguyên từ
+`data/benchmark_queries.yaml`. Chỉ biến strategy là HeadingChunker; việc đọc front matter,
+gắn metadata/`doc_id`/`chunk_index` và nạp store đều dùng lại `build_knowledge_base()` của
+`ingest.py`. File query hiện vẫn ghi bản nháp, chưa QUERY FREEZE, nên đây là kết quả cá nhân
+phục vụ CP5 và phân tích retrieval, chưa phải CSV benchmark chính thức của nhóm.
 
 | # | Câu hỏi (Query) | Top-1 Chunk truy xuất được (tóm tắt) | Điểm Score | Có liên quan không? (Relevant) | Câu trả lời của Agent (tóm tắt) |
 |---|-------|--------------------------------|-------|-----------|------------------------|
-| 1 | VinUni được đăng ký tối đa bao nhiêu tín chỉ trong học kỳ chính? | `ou-quy-che-hoc-vu-tin-chi` — Điều 5 về thời gian và kế hoạch đào tạo | `0.3344` | Không; top-1 sai trường và không có mốc 22 tín chỉ | Agent demo không đủ context để kết luận 22 tín chỉ; context đang nói về thời gian khóa học. |
-| 2 | Được withdraw muộn nhất khi nào và tối đa bao nhiêu tín chỉ? | `ou-quy-che-hoc-vu-tin-chi` — Điều 27 về sinh viên không tốt nghiệp | `0.3497` | Không; không có quy định 30% thời lượng/18 tín chỉ | Agent demo không trả lời được thời hạn và giới hạn rút học phần. |
-| 3 | Chuyển tín chỉ từ trường cũ: tối đa bao nhiêu và nộp lúc nào? | `vinuni-academic-regulations-undergrad` — tiêu đề Chương I, không có nội dung chi tiết | `0.4336` | Không; đúng miền VinUni nhưng sai đoạn, thiếu mốc 50% và tuần đầu học kỳ | Agent demo chỉ nhận tiêu đề chung nên câu trả lời thiếu toàn bộ chi tiết cần kiểm chứng. |
-| 4 | Chưa nộp học phí thì có bị mất môn không? | `vnuf-huong-dan-quy-che-tin-chi` — Điều 10 về khối lượng học tập tối thiểu | `0.2922` | Không; sai trường và không nói việc UEH hủy học phần chưa đóng tiền | Agent demo nói về số tín chỉ đăng ký, không trả lời hậu quả chậm đóng học phí. |
-| 5 | Sau bảo lưu phải xin quay lại trước bao lâu? | `vinuni-leave-of-absence` — phần Purpose/Scope và đầu quy trình LOA | `0.4061` | Chưa đủ; đúng tài liệu/chủ đề nhưng chunk top-1 chưa chứa mốc 1 tháng hay 1 tuần | Agent demo nhận đúng chủ đề bảo lưu nhưng không đủ căn cứ để xử lý hai mốc mâu thuẫn. |
+| 1 | VinUni được đăng ký tối đa bao nhiêu tín chỉ trong học kỳ chính? | `vnuf-huong-dan-quy-che-tin-chi` — Điều 10 về khối lượng học tập tối thiểu | `0.6936` | Không; sai trường, top-3 không có chuỗi `18–22 credits` | Context không đủ bằng chứng để trả lời giới hạn VinUni; không được suy đoán từ quy định VNUF/OU. |
+| 2 | Được withdraw muộn nhất khi nào và tối đa bao nhiêu tín chỉ? | `ueh-dang-ky-huy-hoc-phan` — Chương IV về lớp học phần bị hủy | `0.6715` | Có trong top-3; chunk hạng 3 chứa đủ `30%` và `maximum of 18 credits` | Có thể trả lời: trước 30% thời lượng học phần và tổng số tín chỉ rút tối đa là 18; tuy nhiên bằng chứng không đứng top-1. |
+| 3 | Chuyển tín chỉ từ trường cũ: tối đa bao nhiêu và nộp lúc nào? | `vinuni-academic-regulations-undergrad` — Điều 13 về chuyển tín chỉ | `0.7017` | Chưa đủ; top-3 có mốc `50%` nhưng thiếu chuỗi “during the first week of the semester” | Context chỉ đủ trả lời giới hạn 50%, chưa đủ căn cứ trả lời trọn vẹn thời điểm nộp. |
+| 4 | Chưa nộp học phí thì có bị mất môn không? | `vnuf-huong-dan-quy-che-tin-chi` — quy định rút học phần tuần 6–8 | `0.6430` | Không; top-3 không có câu UEH “hủy học phần chưa đóng học phí” | Context sai trường và thiếu hậu quả cần trả lời, nên agent phải báo không đủ thông tin. |
+| 5 | Sau bảo lưu phải xin quay lại trước bao lâu? | `vinuni-academic-regulations-undergrad` — Điều 13 về chuyển tín chỉ | `0.7349` | Không; gold document ở hạng 2 nhưng sai section, thiếu cả mốc 1 tháng và 1 tuần | Context không đủ để nêu hai quy định khác nhau; đúng `doc_id` ở một kết quả vẫn không bảo đảm đúng chunk. |
 
-**Bao nhiêu câu hỏi trả về chunk có liên quan trong top-3?** 0 / 5 theo tiêu chí nghiêm
-ngặt “chunk phải chứa thông tin trả lời”. Nếu chỉ chấm theo `gold_doc_id`, tài liệu chuẩn có
-trong top-3 ở 3/5 câu (Q1 hạng 2, Q4 hạng 3, Q5 hạng 1), cho thấy chỉ dùng `doc_id` có thể
-đánh giá lạc quan hơn chất lượng chunk thực tế.
+**Bao nhiêu câu hỏi trả về chunk có liên quan trong top-3?** 1 / 5 theo tiêu chí nghiêm ngặt
+“top-3 phải chứa đủ các chuỗi bằng chứng của gold answer”. Q2 đạt đủ hai marker nhưng ở hạng
+3; Q3 chỉ đạt một trong hai marker. Nếu chỉ chấm theo `gold_doc_id`, tài liệu chuẩn xuất hiện
+trong top-3 ở 3/5 câu (Q2, Q3, Q5). Chênh lệch `3/5` theo document và `1/5` theo chunk chứng
+minh rằng đánh giá theo `doc_id` có thể lạc quan hơn chất lượng retrieval thực tế.
+
+**A/B metadata filter:** Q2 được chạy hai lần với cùng query, corpus, embedder và strategy.
+Khi có `metadata_filter={"audience": "student"}`, top-3 lần lượt là UEH, VinUni và VinUni;
+chunk VinUni hạng 3 chứa đủ đáp án. Khi bỏ filter, top-3 đổi thành hai chunk VNUF và một chunk
+UEH, không còn chunk đáp án VinUni. Như vậy filter thực sự giảm nhiễu giữa các quy định học vụ
+có từ vựng gần nhau và là điều kiện cần để Q2 trả lời đúng đối tượng.
+
+**Failure case tiêu biểu — Q5:** top-3 có đúng `vinuni-leave-of-absence` ở hạng 2, score
+`0.6310`, nhưng đó là section thủ tục không chứa mốc “at least one month before”; top-1 lại là
+section chuyển tín chỉ của tài liệu khác. Nguyên nhân không phải “model sai” chung chung mà là
+các section VinUni có chủ đề gần nhau, trong khi heading chunk không overlap nên điều khoản
+thời hạn chỉ có một cơ hội lọt top-k. Thay đổi đề xuất: gắn heading cha vào mọi mảnh recursive,
+thêm overlap nhỏ cho section dài và cân nhắc rerank theo marker/metadata sau bước cosine.
+
+**Giới hạn phần trả lời:** máy không có API LLM nên benchmark này dùng `demo_llm` để kiểm tra
+prompt/provenance, còn embedding là model local thật. Vì `demo_llm` chỉ trả preview prompt,
+tôi chấm retrieval dựa trên bằng chứng trong chunk và không tuyên bố đã đo chất lượng sinh câu
+trả lời của một LLM.
 
 **Điều hay nhất tôi học được từ thành viên khác / nhóm khác (qua demo):**
 > Tôi học được rằng benchmark tốt phải có nhiều kiểu câu hỏi và gold answer kiểm chứng được,

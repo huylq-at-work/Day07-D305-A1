@@ -1,0 +1,125 @@
+{
+  "embedding_backend": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
+  "chunk_size": 200,
+  "heading_params": {
+    "max_level": 2,
+    "max_chars": 1200,
+    "min_section_chars": 80
+  },
+  "documents": [
+    {
+      "doc_id": "ou-quy-che-hoc-vu-tin-chi",
+      "char_count": 38251,
+      "strategies": {
+        "fixed_size": {
+          "count": 255,
+          "avg_length": 199.8078431372549,
+          "std_length": 3.062476451274322,
+          "min_length": 151,
+          "max_length": 200
+        },
+        "by_sentences": {
+          "count": 79,
+          "avg_length": 479.5189873417722,
+          "std_length": 263.6269833464352,
+          "min_length": 134,
+          "max_length": 1535
+        },
+        "recursive": {
+          "count": 228,
+          "avg_length": 164.8815789473684,
+          "std_length": 21.491308181017892,
+          "min_length": 81,
+          "max_length": 198
+        },
+        "heading": {
+          "count": 47,
+          "avg_length": 817.531914893617,
+          "std_length": 362.16522919347005,
+          "min_length": 85,
+          "max_length": 1198
+        }
+      },
+      "cut_example": {
+        "fixed_boundary": "u giáo dục đại học, quy định chuẩn kiến thức,\n\nkỹ năng, phạm vi và cấu trúc nội dung giáo dục đại học phương pháp và hình thức\n\nđào tạo, cách thức đánh giá kết quả đào tạo đối với mỗi môn học, ngành học,\n\ntrình độ đào tạo của giáo dục đại h",
+        "heading_chunk": "Điều 2. Chương\n\ntrình giáo dục đại học\n\n1.     Chương\n\ntrình giáo dục đại học của Trường Đại học Mở Tp. Hồ Chí Minh (sau đây gọi tắt\n\nlà chương trình) thể hiện mục tiêu giáo dục đại học, quy định chuẩn kiến thức,\n\nkỹ năng, phạm vi và cấu trúc nội dung giáo dục đại học phương pháp và hình thức\n\nđào tạo, cách thức đánh giá kết quả đào tạo đối với mỗi môn học, ngành học,\n\ntrình độ đào tạo của giáo dục đại học và cao đẳng.\n\n2.     Chương\n\ntrình được xây dựng trên cơ sở chương trình khung do Bộ trưởng Bộ Giáo dục và\n\nĐào tạo ban hành và định hướng đào tạo của Trường Đại học Mở Tp. Hồ Chí Minh.\n\nMỗi chương trình gắn với một ngành (kiểu đơn ngành) hoặc với một vài ngành\n\n(kiểu song ngành; kiểu ngành chính - ngành phụ; kiểu 2 văn bằng…).\n\n3.     Chương\n\ntrình được cấu trúc từ các môn học thuộc hai"
+      }
+    },
+    {
+      "doc_id": "vinuni-academic-regulations-undergrad",
+      "char_count": 68770,
+      "strategies": {
+        "fixed_size": {
+          "count": 459,
+          "avg_length": 199.71677559912854,
+          "std_length": 6.0612668685713516,
+          "min_length": 70,
+          "max_length": 200
+        },
+        "by_sentences": {
+          "count": 152,
+          "avg_length": 449.8486842105263,
+          "std_length": 195.2534371915404,
+          "min_length": 112,
+          "max_length": 1448
+        },
+        "recursive": {
+          "count": 537,
+          "avg_length": 126.4562383612663,
+          "std_length": 55.87354740010402,
+          "min_length": 2,
+          "max_length": 200
+        },
+        "heading": {
+          "count": 79,
+          "avg_length": 892.8607594936709,
+          "std_length": 305.0518002983198,
+          "min_length": 88,
+          "max_length": 1198
+        }
+      },
+      "cut_example": {
+        "fixed_boundary": "rovision\n\nArticle 1. Governing Scope and Regulated Entities\n\nThis document specifies rules and regulations that govern educational arrangements, examinations, assessment, grading, and graduation requirements based on an academic credit syst",
+        "heading_chunk": "Article 1. Governing Scope and Regulated Entities\n\nThis document specifies rules and regulations that govern educational arrangements, examinations, assessment, grading, and graduation requirements based on an academic credit system for full-time undergraduate students at VinUniversity. These rules and regulations also apply to exchange and visiting students."
+      }
+    },
+    {
+      "doc_id": "vinuni-credit-transfer",
+      "char_count": 5143,
+      "strategies": {
+        "fixed_size": {
+          "count": 34,
+          "avg_length": 199.7941176470588,
+          "std_length": 1.1827040742872412,
+          "min_length": 193,
+          "max_length": 200
+        },
+        "by_sentences": {
+          "count": 9,
+          "avg_length": 568.2222222222222,
+          "std_length": 314.86708934186385,
+          "min_length": 173,
+          "max_length": 1162
+        },
+        "recursive": {
+          "count": 39,
+          "avg_length": 130.10256410256412,
+          "std_length": 63.44017770523292,
+          "min_length": 22,
+          "max_length": 200
+        },
+        "heading": {
+          "count": 5,
+          "avg_length": 1070.2,
+          "std_length": 68.05703490455635,
+          "min_length": 988,
+          "max_length": 1157
+        }
+      },
+      "cut_example": {
+        "fixed_boundary": "outlines the credit transfer process to support the Article 13 of the Academic Regulations in implementing the policy in a manner consistent with the requirements of credits and its relevance with the policy.\n\n2. Area of application\n\nThese",
+        "heading_chunk": "# Procedural Guidelines for Credit Transfer Requests\n\n1. Purpose \n\nThe procedure outlines the credit transfer process to support the Article 13 of the Academic Regulations in implementing the policy in a manner consistent with the requirements of credits and its relevance with the policy.\n\n2. Area of application\n\nThese guidelines apply to all full-time students, who are currently enrolled and registered as undergraduate students, and wish to request a transfer of credits that earned from other external study programs to their program at VinUni.\n\n3. Content\n\n3.1 Timeline\n\nSubmit the request between\nNormally processed by\n\nDuring the first week of the semester – applications must be submitted no later than the published due date as outlined in the Important Dates for enrolments for the study"
+      }
+    }
+  ]
+}

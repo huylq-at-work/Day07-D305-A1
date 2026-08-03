@@ -1,43 +1,107 @@
 {
   "doc_id": "vinuni-credit-transfer",
-  "chunk_size": 500,
-  "char_count": 5143,
-  "embedding_backend": "n/a — thống kê cấu trúc, không dùng embedding",
+  "chunk_size": 200,
+  "embedding_backend": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
   "comparison": {
     "fixed_size": {
-      "count": 12,
-      "avg_length": 474.4166666666667,
-      "std_length": 84.85031755325899,
-      "min_length": 193,
-      "max_length": 500
+      "count": 34,
+      "avg_length": 199.7941176470588,
+      "chunks": [
+        "# Procedural Guidelines for Credit Transfer Requests\n\n1. Purpose \n\nThe procedure outlines the credit transfer process to support the Article 13 of the Academic Regulations in implementing the policy i",
+        " Academic Regulations in implementing the policy in a manner consistent with the requirements of credits and its relevance with the policy.\n\n2. Area of application\n\nThese guidelines apply to all full-",
+        "f application\n\nThese guidelines apply to all full-time students, who are currently enrolled and registered as undergraduate students, and wish to request a transfer of credits that earned from other e",
+        "est a transfer of credits that earned from other external study programs to their program at VinUni.\n\n3. Content\n\n3.1 Timeline\n\nSubmit the request between\nNormally processed by\n\nDuring the first week ",
+        "ween\nNormally processed by\n\nDuring the first week of the semester – applications must be submitted no later than the published due date as outlined in the Important Dates for enrolments for the study ",
+        " the Important Dates for enrolments for the study period.\nWithin 1 week after the add/drop period end\n\n3.2 Undergraduate Transfer Credit Requirements\n\nThe University does not accept courses taught in ",
+        "\nThe University does not accept courses taught in high school to high school students, even if the college provides a transcript of such work.\n\nThe University does not accept online/distance learning ",
+        "iversity does not accept online/distance learning course credit for courses taken outside of VinUniversity.\n\nThe syllabus must cover 80% or more of the material covered in the VinUni course; use a sta",
+        "e material covered in the VinUni course; use a standard textbook equivalent to that used in the VinUniversity’s course; include examinations, writing, projects, or other submitted work, produced indiv",
+        " projects, or other submitted work, produced individually or collectively, that is roughly as extensive as that required in the equivalent VinUniversity courses; indicate roughly equivalent meeting ho",
+        "ty courses; indicate roughly equivalent meeting hours as are required in the equivalent VinUniversity’s course.\n\nThe total number of credit transfers should not be more than 50% of the total credits f",
+        "should not be more than 50% of the total credits for the entire program according to Article 13 of the Academic Regulations.\n\n3.3 Procedures for the implementation of transferring of credit request\n\nF",
+        "mplementation of transferring of credit request\n\nFind the 6 steps for the implementation of transferring of credit request HERE\n\n3.4 Academic Year Acknowledgement\n\nStudent Application\nStudent Eligibil",
+        "nowledgement\n\nStudent Application\nStudent Eligibility\nProcess\nDecision\n\nAcademic year acknowledgment\n\nStudents apply for acknowledgment of study year.\n\n \n\nReceived approval for multiple courses credit",
+        "\n\n \n\nReceived approval for multiple courses credit transfer.\n\nCompleted at least one year of undergraduate or higher level of healthcare training program in Medicine, Nursing, Pharmacy, Public Health,",
+        "ram in Medicine, Nursing, Pharmacy, Public Health, and Biomedicine.\n\nYear of completion should not be more than 5 years.\n\nStudents submit the approval from multiple courses credit transfer. to Program",
+        " from multiple courses credit transfer. to Program Director.\n\nProgram Director will establish a Review Committee to evaluate an application.\n\nProgram Director as Committee Chair to proceed for Dean’s ",
+        "Director as Committee Chair to proceed for Dean’s final approval.\n\nCommittee Review for the application including (i) Program Director (ii) Office of Registrar or delegation, (iii) Faculty/Course Lead",
+        "Registrar or delegation, (iii) Faculty/Course Leader or Block Leader-in-charge (iv) Chair of Relevant Year Curriculum Committee or delegate\n\nOption 1: Decline – Student will continue to study in the a",
+        " Decline – Student will continue to study in the academic year that he/she enrolled)\n\nOption 2: Fully approval – Students will be transferred to the senior year if there is no conflict with the pre-re",
+        "enior year if there is no conflict with the pre-requisite requirement.\n\n3.5 Withdrawal of Credit\n\nThe University reserves the right to withdraw credit where an error has been made in assessing an appl",
+        " where an error has been made in assessing an application or where the documentation provided by the applicant is incomplete, invalid or fraudulent. The Registrar and Program Director are responsible ",
+        "he Registrar and Program Director are responsible for ensuring that credit is withdrawn in such circumstances and will consult with the College Dean (or nominee) and undertake any other action as requ",
+        "or nominee) and undertake any other action as required in order to ensure compliance with University policies. Credit already granted may not be withdrawn due to changes made to the provisions of the ",
+        "rawn due to changes made to the provisions of the Credit Transfer – Academic Policy or related procedures.\n\n3.6 Mechanisms for a Review and Appeal\n\nApplicants for credit who are dissatisfied with the ",
+        "plicants for credit who are dissatisfied with the outcome of a credit application may request a review of the decision. Such a review request must be accompanied by a substantiated statement concernin",
+        "accompanied by a substantiated statement concerning the basis for the review.\n\nFrequent Asked Questions can be found HERE (SharePoint)\n\nStatus and Details\n\nThe procedure outlines the credit transfer p",
+        "ails\n\nThe procedure outlines the credit transfer process to support the Article 13 of the Academic Regulations in implementing the policy in a manner consistent with the requirements of credits and it",
+        "consistent with the requirements of credits and its relevance with the policy. \n\nReference Number:\n\nVUNI.13\n\nDocument Type:\n\nGuideline\n\nIssuing By:\n\nThe Office of University Registrar\n\nIssuing Date:\n\n",
+        "he Office of University Registrar\n\nIssuing Date:\n\nSep 14, 2021\n\nApplying for:\n\nAll VinUniversity\n\nSecurity Classification:\n\nPublic\n\nRelated Documents and Forms:\n\nCourse Exchange: Transfer Credit, Prof",
+        "and Forms:\n\nCourse Exchange: Transfer Credit, Proficiency Exam, Honors Course, and Individual Study \n\nAcademic Regulations for Full-Time Undergraduate Programs \n\nRecord of Changes\n\nRevision\n\nDate\n\nAut",
+        " Programs \n\nRecord of Changes\n\nRevision\n\nDate\n\nAuthor / Editor\n\nDescription\n\nV1.0 \n\nSep 14, 2021 \n\nDeveloped by: Office of Planning and University Registrar\n\nReviewed by: Program Directors\n\nApproved b",
+        "istrar\n\nReviewed by: Program Directors\n\nApproved by: Provost\n\nNew Release \n\nV2.0 \n\nFeb 10, 2023 \n\nDeveloped by: Office of Planning and University Registrar\n\nReviewed by: Program Directors\n\nApproved by",
+        "strar\n\nReviewed by: Program Directors\n\nApproved by: Provost\n\nSupplement Section 3.2, 3.4 and Appendix 2 \n\nYou can download this document here: Procedural Guidelines for Credit Transfer Requests"
+      ]
     },
     "by_sentences": {
       "count": 9,
       "avg_length": 568.2222222222222,
-      "std_length": 314.8670893418639,
-      "min_length": 173,
-      "max_length": 1162
+      "chunks": [
+        "# Procedural Guidelines for Credit Transfer Requests\n\n1. Purpose \n\nThe procedure outlines the credit transfer process to support the Article 13 of the Academic Regulations in implementing the policy in a manner consistent with the requirements of credits and its relevance with the policy. 2.",
+        "Area of application\n\nThese guidelines apply to all full-time students, who are currently enrolled and registered as undergraduate students, and wish to request a transfer of credits that earned from other external study programs to their program at VinUni. 3. Content\n\n3.1 Timeline\n\nSubmit the request between\nNormally processed by\n\nDuring the first week of the semester – applications must be submitted no later than the published due date as outlined in the Important Dates for enrolments for the study period.",
+        "Within 1 week after the add/drop period end\n\n3.2 Undergraduate Transfer Credit Requirements\n\nThe University does not accept courses taught in high school to high school students, even if the college provides a transcript of such work. The University does not accept online/distance learning course credit for courses taken outside of VinUniversity. The syllabus must cover 80% or more of the material covered in the VinUni course; use a standard textbook equivalent to that used in the VinUniversity’s course; include examinations, writing, projects, or other submitted work, produced individually or collectively, that is roughly as extensive as that required in the equivalent VinUniversity courses; indicate roughly equivalent meeting hours as are required in the equivalent VinUniversity’s course.",
+        "The total number of credit transfers should not be more than 50% of the total credits for the entire program according to Article 13 of the Academic Regulations. 3.3 Procedures for the implementation of transferring of credit request\n\nFind the 6 steps for the implementation of transferring of credit request HERE\n\n3.4 Academic Year Acknowledgement\n\nStudent Application\nStudent Eligibility\nProcess\nDecision\n\nAcademic year acknowledgment\n\nStudents apply for acknowledgment of study year. Received approval for multiple courses credit transfer.",
+        "Completed at least one year of undergraduate or higher level of healthcare training program in Medicine, Nursing, Pharmacy, Public Health, and Biomedicine. Year of completion should not be more than 5 years. Students submit the approval from multiple courses credit transfer.",
+        "to Program Director. Program Director will establish a Review Committee to evaluate an application. Program Director as Committee Chair to proceed for Dean’s final approval.",
+        "Committee Review for the application including (i) Program Director (ii) Office of Registrar or delegation, (iii) Faculty/Course Leader or Block Leader-in-charge (iv) Chair of Relevant Year Curriculum Committee or delegate\n\nOption 1: Decline – Student will continue to study in the academic year that he/she enrolled)\n\nOption 2: Fully approval – Students will be transferred to the senior year if there is no conflict with the pre-requisite requirement. 3.5 Withdrawal of Credit\n\nThe University reserves the right to withdraw credit where an error has been made in assessing an application or where the documentation provided by the applicant is incomplete, invalid or fraudulent. The Registrar and Program Director are responsible for ensuring that credit is withdrawn in such circumstances and will consult with the College Dean (or nominee) and undertake any other action as required in order to ensure compliance with University policies.",
+        "Credit already granted may not be withdrawn due to changes made to the provisions of the Credit Transfer – Academic Policy or related procedures. 3.6 Mechanisms for a Review and Appeal\n\nApplicants for credit who are dissatisfied with the outcome of a credit application may request a review of the decision. Such a review request must be accompanied by a substantiated statement concerning the basis for the review.",
+        "Frequent Asked Questions can be found HERE (SharePoint)\n\nStatus and Details\n\nThe procedure outlines the credit transfer process to support the Article 13 of the Academic Regulations in implementing the policy in a manner consistent with the requirements of credits and its relevance with the policy. Reference Number:\n\nVUNI.13\n\nDocument Type:\n\nGuideline\n\nIssuing By:\n\nThe Office of University Registrar\n\nIssuing Date:\n\nSep 14, 2021\n\nApplying for:\n\nAll VinUniversity\n\nSecurity Classification:\n\nPublic\n\nRelated Documents and Forms:\n\nCourse Exchange: Transfer Credit, Proficiency Exam, Honors Course, and Individual Study \n\nAcademic Regulations for Full-Time Undergraduate Programs \n\nRecord of Changes\n\nRevision\n\nDate\n\nAuthor / Editor\n\nDescription\n\nV1.0 \n\nSep 14, 2021 \n\nDeveloped by: Office of Planning and University Registrar\n\nReviewed by: Program Directors\n\nApproved by: Provost\n\nNew Release \n\nV2.0 \n\nFeb 10, 2023 \n\nDeveloped by: Office of Planning and University Registrar\n\nReviewed by: Program Directors\n\nApproved by: Provost\n\nSupplement Section 3.2, 3.4 and Appendix 2 \n\nYou can download this document here: Procedural Guidelines for Credit Transfer Requests"
+      ]
     },
     "recursive": {
-      "count": 15,
-      "avg_length": 341.0,
-      "std_length": 134.49758362141677,
-      "min_length": 113,
-      "max_length": 497
+      "count": 39,
+      "avg_length": 130.10256410256412,
+      "chunks": [
+        "# Procedural Guidelines for Credit Transfer Requests\n\n1. Purpose",
+        "The procedure outlines the credit transfer process to support the Article 13 of the Academic Regulations in implementing the policy in a manner consistent with the requirements of credits and its",
+        "relevance with the policy.",
+        "2. Area of application",
+        "These guidelines apply to all full-time students, who are currently enrolled and registered as undergraduate students, and wish to request a transfer of credits that earned from other external study",
+        "programs to their program at VinUni.",
+        "3. Content\n\n3.1 Timeline\n\nSubmit the request between\nNormally processed by",
+        "During the first week of the semester – applications must be submitted no later than the published due date as outlined in the Important Dates for enrolments for the study period.",
+        "Within 1 week after the add/drop period end",
+        "3.2 Undergraduate Transfer Credit Requirements\n\nThe University does not accept courses taught in high school to high school students, even if the college provides a transcript of such work.",
+        "The University does not accept online/distance learning course credit for courses taken outside of VinUniversity.",
+        "The syllabus must cover 80% or more of the material covered in the VinUni course; use a standard textbook equivalent to that used in the VinUniversity’s course; include examinations, writing,",
+        "projects, or other submitted work, produced individually or collectively, that is roughly as extensive as that required in the equivalent VinUniversity courses; indicate roughly equivalent meeting",
+        "hours as are required in the equivalent VinUniversity’s course.",
+        "The total number of credit transfers should not be more than 50% of the total credits for the entire program according to Article 13 of the Academic Regulations.",
+        "3.3 Procedures for the implementation of transferring of credit request\n\nFind the 6 steps for the implementation of transferring of credit request HERE\n\n3.4 Academic Year Acknowledgement",
+        "Student Application\nStudent Eligibility\nProcess\nDecision\n\nAcademic year acknowledgment\n\nStudents apply for acknowledgment of study year.\n\n \n\nReceived approval for multiple courses credit transfer.",
+        "Completed at least one year of undergraduate or higher level of healthcare training program in Medicine, Nursing, Pharmacy, Public Health, and Biomedicine.",
+        "Year of completion should not be more than 5 years.\n\nStudents submit the approval from multiple courses credit transfer. to Program Director.",
+        "Program Director will establish a Review Committee to evaluate an application.\n\nProgram Director as Committee Chair to proceed for Dean’s final approval.",
+        "Committee Review for the application including (i) Program Director (ii) Office of Registrar or delegation, (iii) Faculty/Course Leader or Block Leader-in-charge (iv) Chair of Relevant Year",
+        "Curriculum Committee or delegate",
+        "Option 1: Decline – Student will continue to study in the academic year that he/she enrolled)",
+        "Option 2: Fully approval – Students will be transferred to the senior year if there is no conflict with the pre-requisite requirement.\n\n3.5 Withdrawal of Credit",
+        "The University reserves the right to withdraw credit where an error has been made in assessing an application or where the documentation provided by the applicant is incomplete, invalid or fraudulent.",
+        "The Registrar and Program Director are responsible for ensuring that credit is withdrawn in such circumstances and will consult with the College Dean (or nominee) and undertake any other action as",
+        "required in order to ensure compliance with University policies.",
+        "Credit already granted may not be withdrawn due to changes made to the provisions of the Credit Transfer – Academic Policy or related procedures.",
+        "3.6 Mechanisms for a Review and Appeal",
+        "Applicants for credit who are dissatisfied with the outcome of a credit application may request a review of the decision.",
+        "Such a review request must be accompanied by a substantiated statement concerning the basis for the review.",
+        "Frequent Asked Questions can be found HERE (SharePoint)\n\nStatus and Details",
+        "The procedure outlines the credit transfer process to support the Article 13 of the Academic Regulations in implementing the policy in a manner consistent with the requirements of credits and its",
+        "relevance with the policy.",
+        "Reference Number:\n\nVUNI.13\n\nDocument Type:\n\nGuideline\n\nIssuing By:\n\nThe Office of University Registrar\n\nIssuing Date:\n\nSep 14, 2021\n\nApplying for:\n\nAll VinUniversity\n\nSecurity Classification:",
+        "Public\n\nRelated Documents and Forms:\n\nCourse Exchange: Transfer Credit, Proficiency Exam, Honors Course, and Individual Study \n\nAcademic Regulations for Full-Time Undergraduate Programs",
+        "Record of Changes\n\nRevision\n\nDate\n\nAuthor / Editor\n\nDescription\n\nV1.0 \n\nSep 14, 2021 \n\nDeveloped by: Office of Planning and University Registrar\n\nReviewed by: Program Directors\n\nApproved by: Provost",
+        "New Release \n\nV2.0 \n\nFeb 10, 2023 \n\nDeveloped by: Office of Planning and University Registrar\n\nReviewed by: Program Directors\n\nApproved by: Provost\n\nSupplement Section 3.2, 3.4 and Appendix 2",
+        "You can download this document here: Procedural Guidelines for Credit Transfer Requests"
+      ]
     }
-  },
-  "sample_chunks": {
-    "fixed_size": [
-      "# Procedural Guidelines for Credit Transfer Requests\n\n1. Purpose \n\nThe procedure outlines the credit transfer process to support the Article 13 of the Academic Regulations in implementing the policy in a manner consistent with the requirements of credits and its relevance with the policy.\n\n2. Area of application\n\nThese guidelines apply to all full-time students, who are currently enrolled and registered as undergraduate students, and wish to request a transfer of credits that earned from other e",
-      "est a transfer of credits that earned from other external study programs to their program at VinUni.\n\n3. Content\n\n3.1 Timeline\n\nSubmit the request between\nNormally processed by\n\nDuring the first week of the semester – applications must be submitted no later than the published due date as outlined in the Important Dates for enrolments for the study period.\nWithin 1 week after the add/drop period end\n\n3.2 Undergraduate Transfer Credit Requirements\n\nThe University does not accept courses taught in "
-    ],
-    "by_sentences": [
-      "# Procedural Guidelines for Credit Transfer Requests\n\n1. Purpose \n\nThe procedure outlines the credit transfer process to support the Article 13 of the Academic Regulations in implementing the policy in a manner consistent with the requirements of credits and its relevance with the policy. 2.",
-      "Area of application\n\nThese guidelines apply to all full-time students, who are currently enrolled and registered as undergraduate students, and wish to request a transfer of credits that earned from other external study programs to their program at VinUni. 3. Content\n\n3.1 Timeline\n\nSubmit the request between\nNormally processed by\n\nDuring the first week of the semester – applications must be submitted no later than the published due date as outlined in the Important Dates for enrolments for the study period."
-    ],
-    "recursive": [
-      "# Procedural Guidelines for Credit Transfer Requests\n\n1. Purpose \n\nThe procedure outlines the credit transfer process to support the Article 13 of the Academic Regulations in implementing the policy in a manner consistent with the requirements of credits and its relevance with the policy.\n\n2. Area of application",
-      "These guidelines apply to all full-time students, who are currently enrolled and registered as undergraduate students, and wish to request a transfer of credits that earned from other external study programs to their program at VinUni.\n\n3. Content\n\n3.1 Timeline\n\nSubmit the request between\nNormally processed by"
-    ]
   }
 }
