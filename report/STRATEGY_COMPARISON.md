@@ -4,9 +4,19 @@
 > `data/benchmark_queries.yaml` (đã có bộ lọc `institution`), cùng embedder
 > `paraphrase-multilingual-MiniLM-L12-v2`. Chỉ đổi **chiến lược chunking**.
 >
-> `HeadingChunker` là của Nguyễn Chí Hướng
-> ([`scripts/custom_chunkers.py`](../scripts/custom_chunkers.py)); các cấu hình còn lại chạy
-> bằng `RecursiveChunker` trong `src/chunking.py`.
+> `HeadingChunker` là của **Nguyễn Chí Hướng**, nằm trên nhánh
+> `2A202601203-NguyenChiHuong` (`scripts/custom_chunkers.py`, commit `c6e630c`).
+> Các cấu hình còn lại chạy bằng `RecursiveChunker` trong `src/chunking.py`.
+>
+> **Số liệu heading dưới đây chưa tái lập được trên `main`.** File của bạn Hướng chưa có
+> trên `main` — bạn ấy sẽ tự đẩy qua PR của mình. Trước lúc đó,
+> `run_benchmark.py --chunker heading` sẽ báo lỗi rõ ràng. Muốn chạy lại ngay thì lấy tạm:
+>
+> ```bash
+> git checkout origin/2A202601203-NguyenChiHuong -- scripts/custom_chunkers.py
+> ```
+>
+> (lấy tạm để chạy thử, **không commit** — để commit đứng đúng tên tác giả.)
 
 ## Kết quả
 
