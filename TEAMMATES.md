@@ -7,10 +7,10 @@
 
 | STT | Họ và tên | Mã sinh viên |
 | :-: | :-- | :-- |
-| 1 | | |
-| 2 | | |
-| 3 | | |
-| 4 | | |
+| 1 | Nguyễn Chí Hướng | 2A202601203 |
+| 2 | Nguyễn Tiến Đạt | 2A202601387 |
+| 3 | Phạm Thị Liên | 2A202601795 |
+| 4 | Lê Quang Huy | 2A202601821 |
 
 ## 2. Phân công vai trò & Branch
 
@@ -26,10 +26,10 @@ hữu** để không conflict và để mỗi mục trong `REPORT_NHOM.md` có �
 
 | Thành viên | Vai trò | Branch | File sở hữu (chỉ người này được sửa) | Hướng dẫn |
 | :-- | :-- | :-- | :-- | :-- |
-| | Data Curator & Metadata Owner | `role1-data-curator` | `data/k3_university/**`, `data/k3_university/sources.csv`, `scripts/fetch_public_pages.py`, `scripts/urls.csv` | [ROLE1](docs/roles/ROLE1_DATA_CURATOR.md) |
-| | Chunking Strategy Lead (heading/section) | `role2-strategy-lead` | `scripts/compare_strategies.py`, `scripts/custom_chunkers.py`, `report/strategy/` | [ROLE2](docs/roles/ROLE2_STRATEGY_LEAD.md) |
-| | Benchmark & Evaluation Designer | `role3-benchmark-eval` | `data/benchmark_queries.yaml`, `scripts/run_benchmark.py`, `report/benchmark/` | [ROLE3](docs/roles/ROLE3_BENCHMARK_EVAL.md) |
-| *(trưởng nhóm)* | Integrator, Report & Demo Lead | `role4-report-demo` | `docs/CONTRACTS.md`, `scripts/merge_benchmark.py`, `report/REPORT_NHOM.md`, `docs/plan.md`, `TEAMMATES.md` | [ROLE4](docs/roles/ROLE4_REPORT_DEMO.md) |
+| Phạm Thị Liên | Data Curator & Metadata Owner | `role1-data-curator` | `data/k3_university/**`, `data/k3_university/sources.csv`, `scripts/fetch_public_pages.py`, `scripts/urls.csv` | [ROLE1](docs/roles/ROLE1_DATA_CURATOR.md) |
+| Nguyễn Chí Hướng | Chunking Strategy Lead (heading/section) | `role2-strategy-lead` | `scripts/compare_strategies.py`, `scripts/custom_chunkers.py`, `report/strategy/` | [ROLE2](docs/roles/ROLE2_STRATEGY_LEAD.md) |
+| Nguyễn Tiến Đạt | Benchmark & Evaluation Designer | `role3-benchmark-eval` | `data/benchmark_queries.yaml`, `scripts/run_benchmark.py`, `report/benchmark/` | [ROLE3](docs/roles/ROLE3_BENCHMARK_EVAL.md) |
+| Lê Quang Huy *(trưởng nhóm)* | Integrator, Report & Demo Lead | `role4-report-demo` | `docs/CONTRACTS.md`, `scripts/merge_benchmark.py`, `report/REPORT_NHOM.md`, `docs/plan.md`, `TEAMMATES.md` | [ROLE4](docs/roles/ROLE4_REPORT_DEMO.md) |
 
 Kế hoạch tổng theo mốc thời gian: [docs/plan.md](docs/plan.md)
 Định dạng đầu ra bắt buộc giữa các role: [docs/CONTRACTS.md](docs/CONTRACTS.md)
@@ -82,10 +82,10 @@ không phải gợi ý. Chốt trong 15 phút đầu, ghi vào bảng ở mục 
 
 | Thành viên | Chiến lược | Tham số dự kiến |
 | :-- | :-- | :-- |
-| | `FixedSizeChunker` (tuned) | `chunk_size=`, `overlap=` |
-| | `HeadingChunker` (custom, theo mục của quy định) | — |
-| | `SentenceChunker` (tuned) | `max_sentences_per_chunk=` |
-| | `RecursiveChunker` (tuned) | `separators=`, `chunk_size=` |
+| Phạm Thị Liên | `FixedSizeChunker` (tuned) | `chunk_size=`, `overlap=` |
+| Nguyễn Chí Hướng | `HeadingChunker` (custom, theo mục của quy định) | — |
+| Nguyễn Tiến Đạt | `SentenceChunker` (tuned) | `max_sentences_per_chunk=` |
+| Lê Quang Huy | `RecursiveChunker` (tuned) | `separators=`, `chunk_size=` |
 
 ## 3. Quy trình Git
 
@@ -94,10 +94,10 @@ Tạo bốn branch trước khi bắt đầu. **Không ai commit thẳng vào `m
 
 | Branch | Người dùng |
 | :-- | :-- |
-| `role1-data-curator` | |
-| `role2-strategy-lead` | |
-| `role3-benchmark-eval` | |
-| `role4-report-demo` | |
+| `role1-data-curator` | Phạm Thị Liên |
+| `role2-strategy-lead` | Nguyễn Chí Hướng |
+| `role3-benchmark-eval` | Nguyễn Tiến Đạt |
+| `role4-report-demo` | Lê Quang Huy |
 
 **Tạo branch (lần đầu, mỗi người chạy trên máy mình):**
 
