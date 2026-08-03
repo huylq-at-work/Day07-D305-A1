@@ -58,40 +58,27 @@ class EmbeddingStore:
         return True
 
     def _make_record(self, doc: Document) -> dict[str, Any]:
-        """Chuẩn hoá một Document thành bản ghi lưu trữ (nhúng đúng MỘT lần)."""
-        record = {
-            "index": self._next_index,
-            "id": doc.id,
+        meta = dict(doc.metadata)
+        meta.setdefault("doc_id", doc.id)
+        return {
+            "id": f"{doc.id}::{self._next_index}",
             "content": doc.content,
-            # Copy để store không dùng chung dict với Document bên ngoài:
-            # người gọi sửa metadata sau đó sẽ không âm thầm đổi dữ liệu đã nạp.
-            "metadata": dict(doc.metadata or {}),
-            "embedding": self._embedding_fn(doc.content),
+            "metadata": meta,
+            "embedding": self._embedding_fn(doc.content)
         }
-        self._next_index += 1
-        return record
 
     def _search_records(self, query: str, records: list[dict[str, Any]], top_k: int) -> list[dict[str, Any]]:
-        """Xếp hạng `records` theo độ tương tự cosine với `query`."""
-        if top_k <= 0 or not records:
-            return []
-
-        query_embedding = self._embedding_fn(query)
-        scored = [
-            {
+        query_vector = self._embedding_fn(query)
+        scored = []
+        for record in records:
+            score = compute_similarity(query_vector, record["embedding"])
+            scored.append({
                 "id": record["id"],
                 "content": record["content"],
                 "metadata": record["metadata"],
-                "score": compute_similarity(query_embedding, record["embedding"]),
-            }
-            for record in records
-        ]
-        # Chốt hạng bằng (điểm giảm dần, thứ tự nạp tăng dần): hai chunk cùng điểm
-        # luôn ra cùng một thứ tự giữa các lần chạy, nếu không thì rank_of_gold
-        # trong benchmark sẽ nhảy lung tung mà không ai giải thích được.
-        order = {id(item): record["index"] for item, record in zip(scored, records)}
-        scored.sort(key=lambda item: (-item["score"], order[id(item)]))
-        return scored[:top_k]
+                "score": score
+            })
+        return sorted(scored, key=lambda item: item["score"], reverse=True)[:top_k]
 
     def add_documents(self, docs: list[Document]) -> None:
         """
@@ -102,23 +89,10 @@ class EmbeddingStore:
         """
         if not docs:
             return
-
-        records = [self._make_record(doc) for doc in docs]
-        self._store.extend(records)
-
-        if self._use_chroma and self._collection is not None:
-            try:
-                self._collection.add(
-                    # doc_id trùng nhau giữa các chunk là chuyện bình thường,
-                    # nên khoá của Chroma phải kèm số thứ tự nạp.
-                    ids=[f"{r['id']}#{r['index']}" for r in records],
-                    documents=[r["content"] for r in records],
-                    embeddings=[r["embedding"] for r in records],
-                    metadatas=[r["metadata"] or {"_": ""} for r in records],
-                )
-            except Exception:
-                # Chroma hỏng thì bản trong bộ nhớ vẫn đủ dùng — không làm sập lab.
-                self._use_chroma = False
+        for doc in docs:
+            record = self._make_record(doc)
+            self._next_index += 1
+            self._store.append(record)
 
     def search(self, query: str, top_k: int = 5) -> list[dict[str, Any]]:
         """
@@ -138,13 +112,20 @@ class EmbeddingStore:
 
         First filter stored chunks by metadata_filter, then run similarity search.
         """
-        if not metadata_filter:
-            return self._search_records(query, self._store, top_k)
-
-        # LỌC TRƯỚC rồi mới xếp hạng. Nếu xếp hạng trước rồi lọc sau thì bộ lọc
-        # chỉ tỉa phần đuôi của top_k, và chunk đúng nằm ngoài top_k vẫn mất.
-        candidates = [r for r in self._store if self._matches(r["metadata"], metadata_filter)]
-        return self._search_records(query, candidates, top_k)
+        if metadata_filter is None:
+            return self.search(query, top_k)
+            
+        filtered_records = []
+        for record in self._store:
+            match = True
+            for k, v in metadata_filter.items():
+                if record["metadata"].get(k) != v:
+                    match = False
+                    break
+            if match:
+                filtered_records.append(record)
+                
+        return self._search_records(query, filtered_records, top_k)
 
     def delete_document(self, doc_id: str) -> bool:
         """
@@ -152,25 +133,10 @@ class EmbeddingStore:
 
         Returns True if any chunks were removed, False otherwise.
         """
-        def belongs_to(record: dict[str, Any]) -> bool:
-            # Ba cách một chunk thuộc về một tài liệu:
-            #   metadata['doc_id']  -> đường đi qua ingest.build_knowledge_base()
-            #   id trùng nguyên     -> Document nạp trực tiếp, chưa chia chunk
-            #   id dạng "<doc>::chunk_N" -> quy ước đặt tên của ingest.chunk_document()
-            return (
-                record["metadata"].get("doc_id") == doc_id
-                or record["id"] == doc_id
-                or record["id"].startswith(f"{doc_id}::")
-            )
-
-        removed = [r for r in self._store if belongs_to(r)]
-        if not removed:
-            return False
-
-        self._store = [r for r in self._store if not belongs_to(r)]
-        if self._use_chroma and self._collection is not None:
-            try:
-                self._collection.delete(ids=[f"{r['id']}#{r['index']}" for r in removed])
-            except Exception:
-                self._use_chroma = False
-        return True
+        original_size = len(self._store)
+        self._store = [r for r in self._store if not (
+            r["metadata"].get("doc_id") == doc_id or 
+            r["id"] == doc_id or 
+            r["id"].startswith(f"{doc_id}::")
+        )]
+        return len(self._store) < original_size

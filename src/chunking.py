@@ -50,16 +50,9 @@ class SentenceChunker:
         if not text or not text.strip():
             return []
 
-        # Tách sau dấu kết câu, giữ lại dấu câu ở cuối mỗi câu.
-        sentences = [s.strip() for s in re.split(r"(?<=[.!?])\s+", text) if s.strip()]
-        if not sentences:
-            return []
-
-        size = self.max_sentences_per_chunk
-        return [
-            " ".join(sentences[start : start + size])
-            for start in range(0, len(sentences), size)
-        ]
+        sentences = [sentence.strip() for sentence in re.split(r"(?<=[.!?])\s+", text) if sentence.strip()]
+        limit = self.max_sentences_per_chunk
+        return [" ".join(sentences[index : index + limit]) for index in range(0, len(sentences), limit)]
 
 
 class RecursiveChunker:
@@ -81,48 +74,41 @@ class RecursiveChunker:
             return []
         return self._split(text, self.separators)
 
-    def _hard_split(self, current_text: str) -> list[str]:
-        """Cắt cứng theo chunk_size khi không còn dấu phân cách nào dùng được."""
-        size = max(1, self.chunk_size)
-        return [current_text[i : i + size] for i in range(0, len(current_text), size)]
-
     def _split(self, current_text: str, remaining_separators: list[str]) -> list[str]:
-        if not current_text:
-            return []
         if len(current_text) <= self.chunk_size:
             return [current_text]
+            
         if not remaining_separators:
-            return self._hard_split(current_text)
-
-        separator, *rest = remaining_separators
-        if separator == "":
-            return self._hard_split(current_text)
-
-        pieces = current_text.split(separator)
-        if len(pieces) == 1:
-            # Dấu phân cách này không xuất hiện -> thử dấu ưu tiên kế tiếp.
+            return [current_text[i:i+self.chunk_size] for i in range(0, len(current_text), self.chunk_size)]
+            
+        sep = remaining_separators[0]
+        rest = remaining_separators[1:]
+        
+        if sep == "":
+            return [current_text[i:i+self.chunk_size] for i in range(0, len(current_text), self.chunk_size)]
+            
+        parts = current_text.split(sep)
+        if len(parts) == 1:
             return self._split(current_text, rest)
-
-        # Gộp các mảnh liền nhau cho tới sát chunk_size; mảnh nào vẫn quá dài
-        # thì đệ quy xuống dấu phân cách mịn hơn.
-        chunks: list[str] = []
+            
+        chunks = []
         buffer = ""
-        for piece in pieces:
-            candidate = piece if not buffer else buffer + separator + piece
+        for part in parts:
+            candidate = part if not buffer else buffer + sep + part
             if len(candidate) <= self.chunk_size:
                 buffer = candidate
-                continue
-            if buffer:
-                chunks.append(buffer)
-                buffer = ""
-            if len(piece) <= self.chunk_size:
-                buffer = piece
             else:
-                chunks.extend(self._split(piece, rest))
+                if buffer:
+                    chunks.append(buffer)
+                if len(part) <= self.chunk_size:
+                    buffer = part
+                else:
+                    buffer = ""
+                    chunks.extend(self._split(part, rest))
         if buffer:
             chunks.append(buffer)
-
-        return [c for c in chunks if c.strip()]
+            
+        return chunks
 
 
 def _dot(a: list[float], b: list[float]) -> float:
@@ -154,21 +140,14 @@ class ChunkingStrategyComparator:
             "recursive": RecursiveChunker(chunk_size=chunk_size),
         }
 
-        comparison: dict = {}
+        comparison = {}
         for name, chunker in strategies.items():
             chunks = chunker.chunk(text)
-            lengths = [len(c) for c in chunks]
             count = len(chunks)
-            avg = sum(lengths) / count if count else 0.0
-            # Độ lệch chuẩn cho biết chiến lược có sinh ra chunk dài ngắn thất thường
-            # hay không — trung bình giống nhau vẫn có thể che một bên toàn mẩu vụn.
-            variance = sum((n - avg) ** 2 for n in lengths) / count if count else 0.0
+            avg_length = sum(len(c) for c in chunks) / count if count > 0 else 0.0
             comparison[name] = {
                 "count": count,
-                "avg_length": avg,
-                "std_length": math.sqrt(variance),
-                "min_length": min(lengths) if lengths else 0,
-                "max_length": max(lengths) if lengths else 0,
+                "avg_length": avg_length,
                 "chunks": chunks,
             }
         return comparison
