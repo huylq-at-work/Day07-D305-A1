@@ -73,9 +73,13 @@ sẽ giống nhau — chunk rác cạnh tranh trực tiếp với chunk nội du
 
 ### T3 — Gắn front matter theo Contract A
 
-Đủ **7 khóa** cho mọi file: `doc_id`, `title`, `source_url`, `retrieved_at`,
-`document_version`, `audience`, `category`. Chi tiết và quy ước enum ở
-[CONTRACTS §1](../CONTRACTS.md#1-contract-a--front-matter-tài-liệu).
+Đủ **8 khóa** cho mọi file, đúng schema của hai file mồi: `doc_id`, `title`, `audience`,
+`department`, `language`, `source_url`, `retrieved_at`, `document_version`. Chi tiết và quy
+ước enum ở [CONTRACTS §1](../CONTRACTS.md#1-contract-a--front-matter-tài-liệu).
+
+Hai file mồi (`course-registration.md`, `library-services.md`) đang dùng `source_url` giả
+(`example.edu`) và `license_or_permission: example-template-replace-me`. Thay bằng nguồn
+thật hoặc bỏ khỏi corpus — đây là mục bị soi trực tiếp ở tiêu chí "nguồn minh bạch".
 
 Kiểm ngay sau khi gắn — lệnh này chạy được **trước khi** bạn làm xong TODO của `src`:
 
@@ -89,13 +93,15 @@ Rồi kiểm từng file thật:
 python -c "from ingest import load_documents; [print(d.id, sorted(d.metadata)) for d in load_documents('data/k3_university')]"
 ```
 
-Mọi dòng in ra phải có đủ 7 khóa (cộng `source` do `load_documents` tự thêm). File nào
+Mọi dòng in ra phải có đủ 8 khóa (cộng `source` do `load_documents` tự thêm). File nào
 thiếu — hoặc tệ hơn, in ra danh sách khóa rỗng vì quên dòng `---` mở đầu — sửa ngay. Lỗi
 front matter **không ném exception**, nó chỉ làm mọi bộ lọc metadata trượt im lặng ở Giờ 3.
 
 ### T4 — `sources.csv`
 
-Đúng các cột: `doc_id,title,source_url,retrieved_at,document_version,audience,category,char_count`.
+Giữ 7 cột sẵn có, thêm `char_count` ở cuối:
+`doc_id,file_path,title,source_url,retrieved_at,document_version,license_or_permission,char_count`.
+Lưu UTF-8 — bản mồi hiện đang hỏng mã tiếng Việt, ghi đè lại cả file.
 
 `char_count` đếm phần thân, không tính front matter:
 

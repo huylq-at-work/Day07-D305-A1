@@ -20,17 +20,19 @@ cái thứ tư (bảng kết quả) là thứ trực tiếp trở thành bảng 
 **Ai sinh ra:** R1 · **Ai dùng:** cả bốn người (qua `build_knowledge_base()` trong `ingest.py`)
 · **Nơi lưu:** `data/k3_university/<doc_id>.md`
 
-Mỗi file `.md` bắt đầu bằng khối front matter phẳng, **đủ 7 khóa**, không thiếu khóa nào:
+Giữ **đúng schema của hai file mồi** đã có sẵn trong `data/k3_university/` — đủ **8 khóa**,
+không thiếu khóa nào, không tự thêm khóa mới cho riêng một file:
 
 ```yaml
 ---
-doc_id: library-renewal-policy
+doc_id: k3-library-renewal
 title: Quy định gia hạn mượn sách thư viện
+audience: student
+department: library
+language: vi
 source_url: https://example.edu/thu-vien/gia-han
 retrieved_at: 2026-08-03
-document_version: 2025-09-01
-audience: student
-category: library
+document_version: "2026.1"
 ---
 
 ## 1. Phạm vi áp dụng
@@ -40,13 +42,19 @@ Nội dung đã làm sạch...
 
 | Khóa | Bắt buộc | Quy ước giá trị |
 | :-- | :-: | :-- |
-| `doc_id` | ✅ | kebab-case, không dấu, **trùng tên file** không đuôi. Đây là khóa `delete_document()` và mọi bảng đối chiếu dùng |
+| `doc_id` | ✅ | kebab-case, không dấu, tiền tố `k3-`. Đây là khóa `delete_document()` và mọi bảng đối chiếu dùng |
 | `title` | ✅ | tiếng Việt có dấu, dùng để in trong báo cáo |
+| `audience` | ✅ | đúng một trong `student` \| `faculty` \| `staff` \| `all`. **K3 bắt buộc** |
+| `department` | ✅ | đúng một trong `registration` \| `tuition` \| `scholarship` \| `library` \| `dormitory` |
+| `language` | ✅ | `vi` \| `en` |
 | `source_url` | ✅ | URL công khai đầy đủ. Bắt buộc theo `docs/DATA_COLLECTION.md` |
 | `retrieved_at` | ✅ | `YYYY-MM-DD`, ngày thực sự lấy về |
-| `document_version` | ✅ | `YYYY-MM-DD` (ngày hiệu lực/ban hành) hoặc số hiệu văn bản. Không biết thì ghi `unknown` chứ **không bỏ khóa** |
-| `audience` | ✅ | đúng một trong `student` \| `faculty` \| `staff`. **K3 bắt buộc** |
-| `category` | ✅ | đúng một trong `registration` \| `tuition` \| `scholarship` \| `library` \| `dormitory` |
+| `document_version` | ✅ | bọc nháy kép (`"2026.1"`), hoặc ngày hiệu lực `"2025-09-01"`, hoặc số hiệu văn bản. Không biết thì ghi `"unknown"` chứ **không bỏ khóa** |
+
+> Hai file mồi hiện tại dùng `source_url: https://example.edu/...` và
+> `license_or_permission: example-template-replace-me` — **đó là template, không phải nguồn
+> thật**. Dùng nguyên trạng làm benchmark là vi phạm yêu cầu "nguồn minh bạch" (10 điểm mục 1).
+> R1 phải thay bằng nguồn công khai thật hoặc xóa hai file này khỏi corpus.
 
 Ba quy tắc dễ vi phạm:
 
@@ -56,10 +64,22 @@ Ba quy tắc dễ vi phạm:
    không bao giờ khớp `metadata_filter={"audience": "student"}` của R3.
 3. Giá trị có dấu `:` phải bọc nháy kép, ví dụ `title: "Học phí: mức thu 2025"`.
 
-Kèm theo: `data/k3_university/sources.csv` với đúng các cột
-`doc_id,title,source_url,retrieved_at,document_version,audience,category,char_count`.
-Cột `char_count` là số ký tự phần thân (không tính front matter) — R2 cần nó để giải thích
-vì sao số chunk khác nhau giữa các tài liệu.
+Kèm theo: `data/k3_university/sources.csv`, giữ nguyên 7 cột đã có sẵn và **thêm một cột
+`char_count`** ở cuối:
+
+```csv
+doc_id,file_path,title,source_url,retrieved_at,document_version,license_or_permission,char_count
+```
+
+`char_count` là số ký tự phần thân (không tính front matter) — R2 cần nó để giải thích vì
+sao số chunk khác nhau giữa các tài liệu. Lấy bằng:
+
+```bash
+python -c "from ingest import load_documents; [print(d.id, len(d.content)) for d in load_documents('data/k3_university')]"
+```
+
+File phải lưu **UTF-8**. Bản mồi hiện tại đang hỏng mã tiếng Việt (`ÄÄƒng kÃ½`) — R1 ghi
+đè lại bằng UTF-8, đừng sửa từng ký tự.
 
 ---
 
