@@ -1,0 +1,9 @@
+# corpus/query freeze confirmed; main commit=9c708b6; run_date=2026-08-03
+# EMBEDDING_PROVIDER=local; non-mock backend=sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2
+# individual core verification: 42/42 tests passed
+query_id,member_branch,strategy,params,n_chunks_total,rank_of_gold,hit_top3,top1_score,top1_doc_id,top3_doc_ids,rubric_score
+Q1,01203_NguyenChiHuong,heading,"max_level=2,max_chars=1200",218,2,true,0.6536,vinuni-registrar-policy-index,vinuni-registrar-policy-index|vinuni-academic-regulations-undergrad|vinuni-credit-transfer,0
+Q2,01203_NguyenChiHuong,heading,"max_level=2,max_chars=1200",218,1,true,0.6674,vinuni-academic-regulations-undergrad,vinuni-academic-regulations-undergrad|vinuni-academic-regulations-undergrad|vinuni-leave-of-absence,1
+Q3,01203_NguyenChiHuong,heading,"max_level=2,max_chars=1200",218,3,true,0.7017,vinuni-academic-regulations-undergrad,vinuni-academic-regulations-undergrad|vinuni-registrar-policy-index|vinuni-credit-transfer,0
+Q4,01203_NguyenChiHuong,heading,"max_level=2,max_chars=1200",218,1,true,0.5074,ueh-dang-ky-huy-hoc-phan,ueh-dang-ky-huy-hoc-phan|ueh-dang-ky-huy-hoc-phan|ueh-dang-ky-huy-hoc-phan,1
+Q5,01203_NguyenChiHuong,heading,"max_level=2,max_chars=1200",218,2,true,0.7349,vinuni-academic-regulations-undergrad,vinuni-academic-regulations-undergrad|vinuni-leave-of-absence|vinuni-registrar-policy-index,0

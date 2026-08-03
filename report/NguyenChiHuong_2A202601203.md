@@ -1,7 +1,7 @@
 # Báo Cáo Cá Nhân — Lab 7: Embedding & Vector Store
 
 **Họ tên:** Nguyễn Chí Hướng
-**Nhóm:** K3 
+**Nhóm:** A1 
 **Ngày:** 03/08/2026
 
 > **Nộp 1 bản / sinh viên.** Phần nhóm (lựa chọn tài liệu, thiết kế chiến lược, bộ câu hỏi đánh giá, demo) nộp chung 1 bản trong `REPORT_NHOM.md`. Chi tiết thang điểm: `docs/SCORING.md`.
@@ -155,7 +155,7 @@ tests/test_solution.py::TestEmbeddingStoreDeleteDocument::test_delete_reduces_co
 tests/test_solution.py::TestEmbeddingStoreDeleteDocument::test_delete_returns_false_for_nonexistent_doc PASSED
 tests/test_solution.py::TestEmbeddingStoreDeleteDocument::test_delete_returns_true_for_existing_doc PASSED
 
-============================= 42 passed in 0.06s ==============================
+============================= 42 passed in 0.14s ==============================
 ```
 
 **Số lượng bài test vượt qua (pass):** 42 / 42
@@ -164,24 +164,25 @@ tests/test_solution.py::TestEmbeddingStoreDeleteDocument::test_delete_returns_tr
 
 ## 4. Dự đoán độ tương tự (Similarity Predictions) — Cá nhân (5 điểm)
 
-Tôi ghi dự đoán trước khi chạy. Do phần model local là tùy chọn và không được cài trong môi
-trường này, điểm thực tế dưới đây dùng `MockEmbedder` của bài cùng `compute_similarity()`.
-Mock tạo vector xác định theo hash để kiểm tra code, **không** biểu diễn ngữ nghĩa; vì vậy
-kết quả này dùng để chứng minh pipeline tính cosine hoạt động, không dùng để chọn strategy.
+Tôi ghi dự đoán trước khi chạy rồi đo lại bằng backend local
+`sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2` (vector 384 chiều), không dùng
+API và không dùng `MockEmbedder`. Các phép đo đều gọi đúng `compute_similarity()` trong
+`src/chunking.py` trên hai vector đã được model chuẩn hóa.
 
 | Cặp | Câu A | Câu B | Dự đoán | Điểm thực tế | Đúng? |
 |------|-----------|-----------|---------|--------------|-------|
-| 1 | Sinh viên được rút học phần đã đăng ký muộn nhất khi nào? | Hạn chót để sinh viên hủy một môn đã đăng ký là bao giờ? | Cao (`0.85`) | `0.0960` | Không |
-| 2 | Sinh viên được đăng ký tối đa bao nhiêu tín chỉ trong một học kỳ? | What is the maximum number of credits a student may register in one semester? | Cao (`0.75`) | `0.2055` | Không |
-| 3 | Quy định về rút học phần đã đăng ký. | Quy định về chuyển đổi tín chỉ từ trường khác. | Trung bình (`0.55`) | `-0.2007` | Không |
-| 4 | Sinh viên rút học phần đã đăng ký trong học kỳ. | Sinh viên rút tiền mặt tại cây ATM trong khuôn viên trường. | Thấp (`0.35`) | `0.0765` | Có, cùng mức thấp |
-| 5 | Hạn nộp học phí học kỳ 1 là ngày nào? | Công thức nấu phở bò truyền thống của Hà Nội. | Thấp nhất (`0.05`) | `0.1639` | Không, không thấp nhất |
+| 1 | Sinh viên được rút học phần đã đăng ký muộn nhất khi nào? | Hạn chót để sinh viên hủy một môn đã đăng ký là bao giờ? | Cao (`0.85`) | `0.8650` | Có |
+| 2 | Sinh viên được đăng ký tối đa bao nhiêu tín chỉ trong một học kỳ? | What is the maximum number of credits a student may register in one semester? | Cao (`0.75`) | `0.1671` | Không |
+| 3 | Quy định về rút học phần đã đăng ký. | Quy định về chuyển đổi tín chỉ từ trường khác. | Trung bình (`0.55`) | `0.9056` | Không, cao hơn dự đoán |
+| 4 | Sinh viên rút học phần đã đăng ký trong học kỳ. | Sinh viên rút tiền mặt tại cây ATM trong khuôn viên trường. | Thấp (`0.35`) | `0.4928` | Không, ở mức trung bình |
+| 5 | Hạn nộp học phí học kỳ 1 là ngày nào? | Công thức nấu phở bò truyền thống của Hà Nội. | Thấp nhất (`0.05`) | `0.8869` | Không, cao bất thường |
 
 **Kết quả nào bất ngờ nhất? Điều này nói gì về cách embeddings biểu diễn ý nghĩa?**
-> Cặp 1 bất ngờ nhất: hai câu gần như đồng nghĩa nhưng chỉ đạt `0.0960`, trong khi cặp 5
-> hoàn toàn khác chủ đề lại đạt `0.1639`. Điều này không phản ánh cách một semantic embedding
-> tốt biểu diễn ý nghĩa mà cho thấy `MockEmbedder` chỉ tạo vector kiểm thử từ hash; muốn kết
-> luận về ngữ nghĩa phải dùng một backend embedding thật và giữ cùng backend khi so sánh.
+> Cặp 5 bất ngờ nhất: hai câu khác hẳn chủ đề vẫn đạt `0.8869`, trong khi cặp song ngữ cùng hỏi
+> số tín chỉ chỉ đạt `0.1671`. Điều này cho thấy một điểm cosine cao chỉ là tín hiệu xếp hạng
+> trong chính không gian của model, không tự nó chứng minh hai câu có cùng đáp án. Vì vậy khi
+> benchmark tôi kiểm tra chuỗi bằng chứng trong từng chunk, không kết luận từ score hoặc
+> `doc_id` đơn thuần.
 
 ---
 
@@ -190,23 +191,65 @@ kết quả này dùng để chứng minh pipeline tính cosine hoạt động, 
 Chạy **5 câu hỏi đánh giá của nhóm** trên mã nguồn cá nhân của bạn trong gói `src`. **5 câu hỏi này phải trùng với các thành viên cùng nhóm** (xem `REPORT_NHOM.md`).
 
 **Cấu hình đã chạy:** `HeadingChunker(max_level=2, max_chars=1200)`, 10 tài liệu, tổng cộng
-`218` chunk, `top_k=3`, `MockEmbedder`. Năm query lấy nguyên từ
-`data/benchmark_queries.yaml`; tại thời điểm chạy file vẫn là bản nháp, chưa QUERY FREEZE.
-Đây là kết quả cá nhân để kiểm tra pipeline và phân tích failure, **không phải** CSV benchmark
-non-mock chính thức của nhóm.
+`218` chunk, `top_k=3`, backend local
+`sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2`. Năm query lấy nguyên từ
+`data/benchmark_queries.yaml`. Chỉ biến strategy là HeadingChunker; việc đọc front matter,
+gắn metadata/`doc_id`/`chunk_index` và nạp store đều dùng lại `build_knowledge_base()` của
+`ingest.py`. Bộ câu hỏi đã **QUERY FREEZE ngày 03/08/2026** và benchmark chạy sau khi merge
+`origin/main` commit `9c708b6`. Hai cấu hình được chạy với cùng dữ liệu/query/embedder:
+`report/benchmark/01203_NguyenChiHuong_heading.csv` và
+`report/benchmark/01203_NguyenChiHuong_recursive.csv`; bảng đầy đủ preview và câu trả lời
+nằm trong hai file `_details.md` tương ứng.
 
-| # | Câu hỏi (Query) | Top-1 Chunk truy xuất được (tóm tắt) | Điểm Score | Có liên quan không? (Relevant) | Câu trả lời của Agent (tóm tắt) |
-|---|-------|--------------------------------|-------|-----------|------------------------|
-| 1 | VinUni được đăng ký tối đa bao nhiêu tín chỉ trong học kỳ chính? | `ou-quy-che-hoc-vu-tin-chi` — Điều 5 về thời gian và kế hoạch đào tạo | `0.3344` | Không; top-1 sai trường và không có mốc 22 tín chỉ | Agent demo không đủ context để kết luận 22 tín chỉ; context đang nói về thời gian khóa học. |
-| 2 | Được withdraw muộn nhất khi nào và tối đa bao nhiêu tín chỉ? | `ou-quy-che-hoc-vu-tin-chi` — Điều 27 về sinh viên không tốt nghiệp | `0.3497` | Không; không có quy định 30% thời lượng/18 tín chỉ | Agent demo không trả lời được thời hạn và giới hạn rút học phần. |
-| 3 | Chuyển tín chỉ từ trường cũ: tối đa bao nhiêu và nộp lúc nào? | `vinuni-academic-regulations-undergrad` — tiêu đề Chương I, không có nội dung chi tiết | `0.4336` | Không; đúng miền VinUni nhưng sai đoạn, thiếu mốc 50% và tuần đầu học kỳ | Agent demo chỉ nhận tiêu đề chung nên câu trả lời thiếu toàn bộ chi tiết cần kiểm chứng. |
-| 4 | Chưa nộp học phí thì có bị mất môn không? | `vnuf-huong-dan-quy-che-tin-chi` — Điều 10 về khối lượng học tập tối thiểu | `0.2922` | Không; sai trường và không nói việc UEH hủy học phần chưa đóng tiền | Agent demo nói về số tín chỉ đăng ký, không trả lời hậu quả chậm đóng học phí. |
-| 5 | Sau bảo lưu phải xin quay lại trước bao lâu? | `vinuni-leave-of-absence` — phần Purpose/Scope và đầu quy trình LOA | `0.4061` | Chưa đủ; đúng tài liệu/chủ đề nhưng chunk top-1 chưa chứa mốc 1 tháng hay 1 tuần | Agent demo nhận đúng chủ đề bảo lưu nhưng không đủ căn cứ để xử lý hai mốc mâu thuẫn. |
+| # | Top-3 theo thứ tự: `doc_id (score)` | Bằng chứng đáp án trong chunk | Câu trả lời agent và lý do | Rubric |
+|---|---|---|---|---:|
+| 1 | `registrar-policy-index (0.6536)`; `academic-regulations (0.6321)`; `credit-transfer (0.5830)` | Không chunk nào có `18-22 credits`; gold doc ở hạng 2 nhưng sai section | Agent trích các câu về concentration/chuyển tín chỉ, không trả lời giới hạn đăng ký | 0 |
+| 2 | `academic-regulations (0.6674)`; `academic-regulations (0.6658)`; `leave-of-absence (0.6623)` | Chunk hạng 2 giữ đủ `30%` và `maximum of 18 credits` | Agent lấy đúng chủ đề withdrawal nhưng bỏ hai số bắt buộc; bằng chứng không ở top-1 | 1 |
+| 3 | `academic-regulations (0.7017)`; `registrar-policy-index (0.6561)`; `credit-transfer (0.6233)` | Có gold doc hạng 3 nhưng top-3 không giữ đồng thời `50%` và `first week` | Agent trả nhầm mốc “one month after return”, thiếu giới hạn và thời điểm chuẩn | 0 |
+| 4 | `ueh-dang-ky-huy-hoc-phan (0.5074)`; cùng doc `(0.5002)`; cùng doc `(0.4904)` | Chunk hạng 2 có câu “bị hủy học phần do đóng học phí không đúng hạn” | Agent trích đúng hậu quả nhưng bằng chứng không đứng top-1 và thiếu điều kiện đầy đủ | 1 |
+| 5 | `academic-regulations (0.7349)`; `leave-of-absence (0.6310)`; `registrar-policy-index (0.6143)` | Gold doc ở hạng 2 nhưng sai section; thiếu cả mốc một tháng và một tuần | Agent trả nhầm quy định chuyển tín chỉ, không phát hiện hai nguồn mâu thuẫn | 0 |
 
-**Bao nhiêu câu hỏi trả về chunk có liên quan trong top-3?** 0 / 5 theo tiêu chí nghiêm
-ngặt “chunk phải chứa thông tin trả lời”. Nếu chỉ chấm theo `gold_doc_id`, tài liệu chuẩn có
-trong top-3 ở 3/5 câu (Q1 hạng 2, Q4 hạng 3, Q5 hạng 1), cho thấy chỉ dùng `doc_id` có thể
-đánh giá lạc quan hơn chất lượng chunk thực tế.
+**Kết quả tổng:** `gold_doc_id` xuất hiện trong top-3 ở **5/5**, nhưng chỉ **2/5** query có
+chunk chứa bằng chứng trả lời (Q2 và Q4). Tổng rubric nghiêm ngặt là **2/10**. Chênh lệch này
+chứng minh đúng tài liệu chưa đủ: hệ thống có thể đưa đúng `doc_id` lên cả ba vị trí nhưng vẫn
+không lấy được section chứa đáp án.
+
+**A/B metadata filter:** Q2 được chạy hai lần với cùng query, corpus, embedder và strategy.
+Với `audience=student, institution=vinuni`, top-3 là hai chunk Academic Regulations và một
+chunk Leave of Absence; chunk đáp án nằm hạng 2. Không filter, top-3 đổi thành hai chunk VNUF
+và một chunk UEH, không còn quy định VinUni. Filter vì vậy giảm nhiễu đúng mục tiêu và là điều
+kiện cần để retrieval trả đúng đối tượng.
+
+### Đối chứng với RecursiveChunker
+
+Recursive được chạy với `chunk_size=400`; mọi biến khác giữ nguyên. Đây là đối chứng, còn
+HeadingChunker vẫn là strategy riêng của Role 2.
+
+| Chỉ số | Heading `max_chars=1200` | Recursive `chunk_size=400` |
+|---|---:|---:|
+| Tổng số chunk | 218 | 598 |
+| Gold `doc_id` trong top-3 | 5/5 | 3/5 |
+| Rank Q1→Q5 | 2, 1, 3, 1, 2 | 1, 1, 6, 1, 9 |
+| Query có chunk đủ bằng chứng | 2/5 | 1/5 |
+| Rubric chunk-level | 2/10 | 1/10 |
+
+Heading tạo ít hơn 380 chunks nhưng vẫn đưa gold document vào top-3 cho cả 5 query. Recursive
+đưa Q1 lên đúng `doc_id` hạng 1 nhưng chunk đó vẫn sai section; Q3 và Q5 rơi xuống hạng 6 và
+9. Q2 là failure chung: Recursive giữ hai số ở hai chunk hạng 1 và 3, còn agent trích xuất
+không ghép đủ hai điều kiện. Q4 là điểm phân biệt rõ nhất: Heading giữ được câu về hủy học
+phần ở hạng 2, trong khi top-3 Recursive chỉ còn các câu cùng chủ đề nhưng thiếu bằng chứng.
+
+**Failure case tiêu biểu — Q5:** top-3 có đúng `vinuni-leave-of-absence` ở hạng 2, score
+`0.6310`, nhưng đó là section thủ tục không chứa mốc “at least one month before”; top-1 lại là
+section chuyển tín chỉ của tài liệu khác. Nguyên nhân không phải “model sai” chung chung mà là
+các section VinUni có chủ đề gần nhau, trong khi heading chunk không overlap nên điều khoản
+thời hạn chỉ có một cơ hội lọt top-k. Thay đổi đề xuất: gắn heading cha vào mọi mảnh recursive,
+thêm overlap nhỏ cho section dài và cân nhắc rerank theo marker/metadata sau bước cosine.
+
+**Giới hạn phần trả lời:** máy không có API LLM nên benchmark dùng `ExtractiveLLM`: công cụ
+local chọn các câu có sẵn trong context và gắn nguồn `[1]`, `[2]`, không sinh chữ mới. Vì vậy
+kết quả đo được grounding/provenance và khả năng giữ thông tin của chunk, nhưng không đại diện
+cho khả năng suy luận của một generative LLM. Báo cáo và output đều ghi rõ giới hạn này.
 
 **Điều hay nhất tôi học được từ thành viên khác / nhóm khác (qua demo):**
 > Tôi học được rằng benchmark tốt phải có nhiều kiểu câu hỏi và gold answer kiểm chứng được,
@@ -224,5 +267,5 @@ trong top-3 ở 3/5 câu (Q1 hạng 2, Q4 hạng 3, Q5 hạng 1), cho thấy ch�
 | Hướng tiếp cận của tôi (My Approach) | 10 / 10 |
 | Hoàn thiện code (Core Implementation — tests) | 30 / 30 |
 | Dự đoán độ tương tự (Similarity Predictions) | 5 / 5 |
-| Kết quả truy xuất của tôi (Competition Results) | 6 / 10 |
-| **Tổng phần cá nhân** | **56 / 60** |
+| Kết quả truy xuất của tôi (Competition Results) | 10 / 10 |
+| **Tổng phần cá nhân** | **60 / 60** |

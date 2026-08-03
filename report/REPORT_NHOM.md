@@ -73,7 +73,7 @@ cắt hỏng và heading giữ nguyên nằm trong `report/strategy/HEADING_COMP
 
 > Mỗi thành viên điền một khối dưới đây (copy thêm nếu nhóm có nhiều hơn 3 người).
 
-**Role 2 — Nguyễn Chí Hướng (`role2-strategy-lead`)**
+**Role 2 — Nguyễn Chí Hướng (`01203_NguyenChiHuong`)**
 - **Loại chiến lược:** custom `HeadingChunker(max_level=2, max_chars=1200)`.
 - **Mô tả & lý do chọn:** Quy định học vụ được tổ chức theo Chương/Điều/Article nên heading
   là ranh giới ngữ nghĩa tự nhiên. Mục dài được chia tiếp bằng `RecursiveChunker`, mục ngắn
@@ -82,6 +82,8 @@ cắt hỏng và heading giữ nguyên nằm trong `report/strategy/HEADING_COMP
 - **Kết quả benchmark cá nhân:** 218 chunks; gold `doc_id` trong top-3 ở 5/5 nhưng chỉ 2/5
   query có chunk chứa bằng chứng, tổng rubric nghiêm ngặt 2/10. Điều này cho thấy đúng document
   không đồng nghĩa đúng section.
+- **Đối chứng Recursive:** `chunk_size=400`, 598 chunks, gold `doc_id` top-3 ở 3/5, chỉ 1/5
+  query có đủ bằng chứng và rubric 1/10. Heading tốt hơn về coverage dù collection nhỏ hơn.
 
 **Thành viên 1 — [Tên]**
 - **Loại chiến lược:** [FixedSize / Sentence / Recursive / custom]

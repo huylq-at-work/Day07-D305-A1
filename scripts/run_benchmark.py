@@ -66,13 +66,13 @@ def evidence_rank(query_id: str, hits: list[dict]) -> int:
     return RANK_NOT_FOUND
 
 
-def render_details(details: list[dict], *, backend: str, params: str,
-                   n_chunks: int) -> str:
+def render_details(details: list[dict], *, backend: str, strategy: str,
+                   params: str, n_chunks: int) -> str:
     lines = [
-        "# Benchmark chi tiết — Role 2 HeadingChunker",
+        f"# Benchmark chi tiết — Nguyễn Chí Hướng — {strategy}",
         "",
         f"- Backend: `{backend}`",
-        f"- Strategy: `heading({params})`",
+        f"- Strategy: `{strategy}({params})`",
         f"- Tổng số chunk: `{n_chunks}`; top-k: `3`",
         "- Agent: `ExtractiveLLM` — chỉ trích câu có sẵn và dẫn nguồn, không sinh văn bản mới.",
         "",
@@ -344,7 +344,13 @@ def main() -> int:
 
     details_path = out_dir / f"{branch}_{args.chunker}_details.md"
     details_path.write_text(
-        render_details(details, backend=backend, params=params, n_chunks=total_chunks),
+        render_details(
+            details,
+            backend=backend,
+            strategy=args.chunker,
+            params=params,
+            n_chunks=total_chunks,
+        ),
         encoding="utf-8",
     )
 

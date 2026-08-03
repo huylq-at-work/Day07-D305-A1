@@ -1,0 +1,9 @@
+# corpus/query freeze confirmed; main commit=9c708b6; run_date=2026-08-03
+# EMBEDDING_PROVIDER=local; non-mock backend=sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2
+# individual core verification: 42/42 tests passed
+query_id,member_branch,strategy,params,n_chunks_total,rank_of_gold,hit_top3,top1_score,top1_doc_id,top3_doc_ids,rubric_score
+Q1,01203_NguyenChiHuong,recursive,chunk_size=400,598,1,true,0.6469,vinuni-academic-regulations-undergrad,vinuni-academic-regulations-undergrad|vinuni-registrar-policy-index|vinuni-academic-regulations-undergrad,0
+Q2,01203_NguyenChiHuong,recursive,chunk_size=400,598,1,true,0.6724,vinuni-academic-regulations-undergrad,vinuni-academic-regulations-undergrad|vinuni-academic-regulations-undergrad|vinuni-academic-regulations-undergrad,1
+Q3,01203_NguyenChiHuong,recursive,chunk_size=400,598,6,false,0.7014,vinuni-academic-regulations-undergrad,vinuni-academic-regulations-undergrad|vinuni-academic-regulations-undergrad|vinuni-registrar-policy-index,0
+Q4,01203_NguyenChiHuong,recursive,chunk_size=400,598,1,true,0.6225,ueh-dang-ky-huy-hoc-phan,ueh-dang-ky-huy-hoc-phan|ueh-dang-ky-huy-hoc-phan|ueh-dang-ky-huy-hoc-phan,0
+Q5,01203_NguyenChiHuong,recursive,chunk_size=400,598,9,false,0.7633,vinuni-academic-regulations-undergrad,vinuni-academic-regulations-undergrad|vinuni-class-schedule-registration|vinuni-academic-regulations-undergrad,0

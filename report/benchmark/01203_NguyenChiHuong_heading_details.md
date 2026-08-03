@@ -1,4 +1,4 @@
-# Benchmark chi tiết — Role 2 HeadingChunker
+# Benchmark chi tiết — Nguyễn Chí Hướng — heading
 
 - Backend: `sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2`
 - Strategy: `heading(max_level=2,max_chars=1200)`

@@ -1,9 +1,9 @@
 # ROLE 2 — Chunking Strategy Lead (heading/section)
 
-**Người phụ trách:** Nguyễn Chí Hướng — K3 · **Branch benchmark:** `role2-strategy-lead`
+**Người phụ trách:** Nguyễn Chí Hướng — K3 · **Member benchmark:** `01203_NguyenChiHuong`
 
-> Nhánh Git cá nhân: `2A202601203-NguyenChiHuong`; Contract C dùng tên vai trò ổn định
-> `role2-strategy-lead` để R4 ghép kết quả giữa các thành viên.
+> Nhánh Git cá nhân: `2A202601203-NguyenChiHuong`; các CSV cá nhân dùng member id
+> `01203_NguyenChiHuong` để R4 ghép kết quả.
 
 > Đọc [docs/plan.md](../plan.md) và [docs/CONTRACTS.md](../CONTRACTS.md) trước.
 > Mọi lệnh chạy từ gốc repo.
@@ -103,7 +103,7 @@ Sau QUERY FREEZE, chạy harness của R3 bằng chunker của bạn:
 python scripts\run_benchmark.py --chunker heading --top-k 3
 ```
 
-Nộp `report/benchmark/role2-strategy-lead_heading.csv` đúng 11 cột theo
+Nộp `report/benchmark/01203_NguyenChiHuong_heading.csv` đúng 11 cột theo
 [Contract C](../CONTRACTS.md#3-contract-c--bảng-kết-quả-benchmark-quan-trọng-nhất), 5 dòng,
 kèm 3 dòng comment điều kiện hợp lệ ở đầu file.
 
@@ -129,7 +129,8 @@ Ba câu hỏi rubric muốn nghe, trả lời bằng số trong bảng:
 - [ ] Đã xác nhận `_backend_name` không phải mock trước mọi lần chạy
 - [ ] `HeadingChunker` xử lý cả ba ca: mục dài, mục ngắn, phần trước heading đầu tiên
 - [ ] Có ≥1 ví dụ đọc được về chunk mà baseline cắt hỏng, heading giữ nguyên
-- [ ] `report/benchmark/role2-strategy-lead_heading.csv` đúng 11 cột, 5 dòng
+- [x] `report/benchmark/01203_NguyenChiHuong_heading.csv` đúng 11 cột, 5 dòng
+- [x] Đã chạy đối chứng `01203_NguyenChiHuong_recursive.csv` trên cùng corpus/query/embedder
 - [ ] Bảng so sánh chéo dựng từ `ALL.csv`, không gõ tay số của ai
 - [ ] Trả lời được cả ba câu hỏi ở T5 bằng số liệu
 
