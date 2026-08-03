@@ -169,20 +169,45 @@ class EmbeddingStore:
         """
         Remove all chunks belonging to a document.
 
+        Matches by metadata['doc_id'] to remove all chunks from the same document.
+        For backward compatibility, also matches direct Document.id if no metadata match found.
         Returns True if any chunks were removed, False otherwise.
         """
         if self._use_chroma and self._collection is not None:
             try:
-                # Try to get the document first to check if it exists
-                existing = self._collection.get(ids=[doc_id])
+                # First try to match by metadata['doc_id']
+                existing = self._collection.get(where={"doc_id": doc_id})
                 if existing and existing['ids']:
-                    self._collection.delete(ids=[doc_id])
+                    self._collection.delete(ids=existing['ids'])
                     return True
+                
+                # Fallback: try matching by direct ID (for backward compatibility)
+                try:
+                    direct_match = self._collection.get(ids=[doc_id])
+                    if direct_match and direct_match['ids']:
+                        self._collection.delete(ids=[doc_id])
+                        return True
+                except:
+                    pass
+                
                 return False
             except Exception:
                 return False
         else:
             # In-memory deletion
             original_size = len(self._store)
-            self._store = [record for record in self._store if record['id'] != doc_id]
+            
+            # First try matching by metadata['doc_id']
+            self._store = [
+                record for record in self._store 
+                if record.get('metadata', {}).get('doc_id') != doc_id
+            ]
+            
+            # If nothing was deleted, try matching by direct id (backward compatibility)
+            if len(self._store) == original_size:
+                self._store = [
+                    record for record in self._store 
+                    if record.get('id') != doc_id
+                ]
+            
             return len(self._store) < original_size
