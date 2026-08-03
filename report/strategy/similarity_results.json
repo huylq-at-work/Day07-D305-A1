@@ -1,0 +1,61 @@
+{
+  "embedding_backend": "sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2",
+  "predicted_rank": [
+    "P1",
+    "P2",
+    "P3",
+    "P4",
+    "P5"
+  ],
+  "actual_rank": [
+    "P1",
+    "P2",
+    "P4",
+    "P3",
+    "P5"
+  ],
+  "rank_matches": false,
+  "score_spread": 0.7724,
+  "pairs": [
+    {
+      "id": "P1",
+      "sentence_a": "Sinh viên được rút học phần đã đăng ký muộn nhất khi nào?",
+      "sentence_b": "Hạn chót để sinh viên hủy một môn đã đăng ký là bao giờ?",
+      "predicted": 0.85,
+      "actual": 0.838,
+      "delta": -0.012
+    },
+    {
+      "id": "P2",
+      "sentence_a": "Sinh viên được đăng ký tối đa bao nhiêu tín chỉ trong một học kỳ?",
+      "sentence_b": "What is the maximum number of credits a student may register in one semester?",
+      "predicted": 0.75,
+      "actual": 0.77,
+      "delta": 0.02
+    },
+    {
+      "id": "P3",
+      "sentence_a": "Quy định về rút học phần đã đăng ký.",
+      "sentence_b": "Quy định về chuyển đổi tín chỉ từ trường khác.",
+      "predicted": 0.55,
+      "actual": 0.5219,
+      "delta": -0.0281
+    },
+    {
+      "id": "P4",
+      "sentence_a": "Sinh viên rút học phần đã đăng ký trong học kỳ.",
+      "sentence_b": "Sinh viên rút tiền mặt tại cây ATM trong khuôn viên trường.",
+      "predicted": 0.35,
+      "actual": 0.6028,
+      "delta": 0.2528
+    },
+    {
+      "id": "P5",
+      "sentence_a": "Hạn nộp học phí học kỳ 1 là ngày nào?",
+      "sentence_b": "Công thức nấu phở bò truyền thống của Hà Nội.",
+      "predicted": 0.05,
+      "actual": 0.0656,
+      "delta": 0.0156
+    }
+  ]
+}

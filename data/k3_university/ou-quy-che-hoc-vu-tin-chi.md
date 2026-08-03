@@ -5,6 +5,7 @@ source_url: "http://v1.ou.edu.vn/qldt/Pages/Quy-che-hoc-vu-theo-hoc-che-tin-chi.
 retrieved_at: "2026-08-03"
 document_version: "not-stated"
 audience: "student"
+institution: "ou"
 department: "dao-tao"
 category: "academic-regulation"
 language: "vi"

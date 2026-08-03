@@ -5,6 +5,7 @@ source_url: "https://daotao.ueh.edu.vn/quy-dinh-dang-ky-va-huy-hoc-phan-da-dang-
 retrieved_at: "2026-08-03"
 document_version: "not-stated"
 audience: "student"
+institution: "ueh"
 department: "dao-tao"
 category: "course-registration"
 language: "vi"

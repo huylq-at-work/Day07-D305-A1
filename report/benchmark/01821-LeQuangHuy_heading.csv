@@ -1,0 +1,9 @@
+# backend=sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2
+# corpus=data/k3_university chunks=318 docs=10
+# queries=data/benchmark_queries.yaml top_k=3 branch=01821-LeQuangHuy
+query_id,member_branch,strategy,params,n_chunks_total,rank_of_gold,hit_top3,top1_score,top1_doc_id,top3_doc_ids,rubric_score
+Q1,01821-LeQuangHuy,heading,"max_level=2,max_chars=800",318,1,true,0.6321,vinuni-academic-regulations-undergrad,vinuni-academic-regulations-undergrad|vinuni-registrar-policy-index|vinuni-credit-transfer,2
+Q2,01821-LeQuangHuy,heading,"max_level=2,max_chars=800",318,1,true,0.6674,vinuni-academic-regulations-undergrad,vinuni-academic-regulations-undergrad|vinuni-academic-regulations-undergrad|vinuni-academic-regulations-undergrad,2
+Q3,01821-LeQuangHuy,heading,"max_level=2,max_chars=800",318,2,true,0.7017,vinuni-academic-regulations-undergrad,vinuni-academic-regulations-undergrad|vinuni-credit-transfer|vinuni-academic-regulations-undergrad,1
+Q4,01821-LeQuangHuy,heading,"max_level=2,max_chars=800",318,1,true,0.5580,ueh-dang-ky-huy-hoc-phan,ueh-dang-ky-huy-hoc-phan|ueh-dang-ky-huy-hoc-phan|ueh-dang-ky-huy-hoc-phan,2
+Q5,01821-LeQuangHuy,heading,"max_level=2,max_chars=800",318,2,true,0.7349,vinuni-academic-regulations-undergrad,vinuni-academic-regulations-undergrad|vinuni-leave-of-absence|vinuni-credit-transfer,1

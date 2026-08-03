@@ -1,300 +1,190 @@
-"""Chạy 5 benchmark query và xuất CSV Contract C cho Role 2.
+#!/usr/bin/env python3
+"""Chạy 5 câu hỏi đánh giá và xuất CSV theo docs/CONTRACTS.md §3 (Contract C).
 
-Script cố ý không fallback sang mock: benchmark chính thức chỉ được chạy sau
-CORPUS FREEZE + QUERY FREEZE, với một embedding backend thật.
+    python scripts/run_benchmark.py --chunker recursive --top-k 3
+
+Mỗi thành viên chạy cùng bộ câu hỏi trên CHIẾN LƯỢC CHUNKING RIÊNG của mình.
+Bốn file CSV cùng 11 cột được `scripts/merge_benchmark.py` gộp thành ALL.csv —
+đó là nguồn duy nhất cho mọi bảng trong REPORT_NHOM.md.
 """
-
 from __future__ import annotations
 
 import argparse
 import csv
-import json
-import os
-import re
-import subprocess
 import sys
-from datetime import date
 from pathlib import Path
-from typing import Any
 
-ROOT_DIR = Path(__file__).resolve().parents[1]
-if str(ROOT_DIR) not in sys.path:
-    sys.path.insert(0, str(ROOT_DIR))
+REPO_ROOT = Path(__file__).resolve().parent.parent
+sys.path.insert(0, str(REPO_ROOT))
 
-from dotenv import load_dotenv
+from ingest import build_knowledge_base  # noqa: E402
+from src.chunking import FixedSizeChunker, RecursiveChunker, SentenceChunker  # noqa: E402
 
-from ingest import build_knowledge_base, load_documents
-from scripts.custom_chunkers import HeadingChunker
-from src.embeddings import LocalEmbedder, OpenAIEmbedder
+# Sâu hơn top_k: cần biết chunk đúng đứng hạng mấy kể cả khi nó trượt top-3.
+RANK_SEARCH_DEPTH = 10
+RANK_NOT_FOUND = 99
 
-
-CSV_COLUMNS = [
-    "query_id",
-    "member_branch",
-    "strategy",
-    "params",
-    "n_chunks_total",
-    "rank_of_gold",
-    "hit_top3",
-    "top1_score",
-    "top1_doc_id",
-    "top3_doc_ids",
+FIELDS = [
+    "query_id", "member_branch", "strategy", "params", "n_chunks_total",
+    "rank_of_gold", "hit_top3", "top1_score", "top1_doc_id", "top3_doc_ids",
     "rubric_score",
 ]
 
 
-def _parse_scalar(value: str) -> Any:
-    value = value.strip()
-    if value in {"null", "~"}:
-        return None
-    if value.startswith('"') and value.endswith('"'):
-        return json.loads(value)
-    if value.startswith("'") and value.endswith("'"):
-        return value[1:-1].replace("''", "'")
-    return value
-
-
-def load_queries(path: str | Path) -> list[dict[str, Any]]:
-    """Đọc subset YAML phẳng/nested dùng bởi Contract B mà không cần PyYAML."""
-    lines = Path(path).read_text(encoding="utf-8").splitlines()
-    queries: list[dict[str, Any]] = []
-    current: dict[str, Any] | None = None
-    index = 0
-
-    while index < len(lines):
-        line = lines[index]
-        item_match = re.match(r"^\s{2}-\s+(\w+):\s*(.*)$", line)
-        field_match = re.match(r"^\s{4}(\w+):\s*(.*)$", line)
-
-        if item_match:
-            if current is not None:
-                queries.append(current)
-            current = {item_match.group(1): _parse_scalar(item_match.group(2))}
-            index += 1
-            continue
-
-        if current is None or not field_match:
-            index += 1
-            continue
-
-        key, raw_value = field_match.groups()
-        if raw_value in {">", ">-", "|", "|-"}:
-            block: list[str] = []
-            index += 1
-            while index < len(lines):
-                continuation = lines[index]
-                if re.match(r"^\s{4}\w+:\s*", continuation) or re.match(
-                    r"^\s{2}-\s+\w+:\s*", continuation
-                ):
-                    break
-                if continuation.strip() and not continuation.lstrip().startswith("#"):
-                    block.append(continuation.strip())
-                index += 1
-            current[key] = " ".join(block)
-            continue
-
-        if raw_value == "" and key == "metadata_filter":
-            nested: dict[str, Any] = {}
-            index += 1
-            while index < len(lines):
-                nested_match = re.match(r"^\s{6}(\w+):\s*(.*)$", lines[index])
-                if not nested_match:
-                    break
-                nested[nested_match.group(1)] = _parse_scalar(nested_match.group(2))
-                index += 1
-            current[key] = nested
-            continue
-
-        current[key] = _parse_scalar(raw_value)
-        index += 1
-
-    if current is not None:
-        queries.append(current)
-    return queries
-
-
-def validate_inputs(query_path: Path, docs_path: Path) -> list[dict[str, Any]]:
-    raw_queries = query_path.read_text(encoding="utf-8")
-    if "BẢN NHÁP" in raw_queries.upper() or "QUERY FREEZE" not in raw_queries.upper():
-        raise ValueError(
-            "data/benchmark_queries.yaml chưa QUERY FREEZE; không được tạo CSV chính thức."
-        )
-
-    queries = load_queries(query_path)
-    required = {
-        "id",
-        "question",
-        "gold_answer",
-        "gold_doc_id",
-        "metadata_filter",
-        "kind",
-    }
-    if len(queries) != 5:
-        raise ValueError(f"Contract B cần đúng 5 query, hiện có {len(queries)}.")
-    if [query.get("id") for query in queries] != [f"Q{i}" for i in range(1, 6)]:
-        raise ValueError("Query ID phải đúng thứ tự Q1–Q5.")
-    for query in queries:
-        missing = required - query.keys()
-        if missing:
-            raise ValueError(f"{query.get('id', '?')} thiếu: {', '.join(sorted(missing))}")
-
-    doc_ids = {document.id for document in load_documents(docs_path)}
-    unknown = sorted({str(query["gold_doc_id"]) for query in queries} - doc_ids)
-    if unknown:
-        raise ValueError(f"gold_doc_id không có trong corpus: {', '.join(unknown)}")
-    if not any(query["metadata_filter"] for query in queries):
-        raise ValueError("K3 cần ít nhất một query có metadata_filter.")
-    return queries
+def build_chunker(name: str, chunk_size: int, overlap: int, max_sentences: int,
+                  max_chars: int = 800):
+    """Trả về (chunker, chuỗi mô tả tham số) cho cột `params` của Contract C."""
+    if name == "fixed":
+        return FixedSizeChunker(chunk_size=chunk_size, overlap=overlap), \
+            f"chunk_size={chunk_size},overlap={overlap}"
+    if name == "sentence":
+        return SentenceChunker(max_sentences_per_chunk=max_sentences), \
+            f"max_sentences_per_chunk={max_sentences}"
+    if name == "recursive":
+        return RecursiveChunker(chunk_size=chunk_size), f"chunk_size={chunk_size}"
+    if name == "heading":
+        try:
+            from scripts.custom_chunkers import HeadingChunker
+        except ImportError:
+            raise SystemExit(
+                "Chưa có scripts/custom_chunkers.py (HeadingChunker là phần của R2)."
+            )
+        return HeadingChunker(max_chars=max_chars), f"max_level=2,max_chars={max_chars}"
+    raise SystemExit(f"Chiến lược không hợp lệ: {name}")
 
 
 def select_embedder(provider: str):
-    """Tạo backend thật; tuyệt đối không fallback sang mock."""
-    if provider == "local":
-        try:
-            embedder = LocalEmbedder()
-        except Exception as exc:
-            raise RuntimeError(
-                "Local embedding chưa sẵn sàng (cần PyTorch + sentence-transformers model)."
-            ) from exc
-    elif provider == "openai":
-        if not os.getenv("OPENAI_API_KEY"):
-            raise RuntimeError("OPENAI_API_KEY chưa được cấu hình.")
-        try:
-            embedder = OpenAIEmbedder()
-        except Exception as exc:
-            raise RuntimeError("OpenAI embedding backend chưa sẵn sàng.") from exc
-    else:
-        raise RuntimeError("EMBEDDING_PROVIDER phải là 'local' hoặc 'openai'; mock bị cấm.")
-
-    backend_name = getattr(embedder, "_backend_name", embedder.__class__.__name__)
-    if "mock" in backend_name.lower():
-        raise RuntimeError("Embedding backend đang là mock; benchmark bị chặn.")
-    return embedder, backend_name
+    """Chọn embedder và TRẢ VỀ CẢ TÊN BACKEND để người chạy tự kiểm."""
+    if provider == "mock":
+        from src.embeddings import _mock_embed
+        return _mock_embed, _mock_embed._backend_name
+    from src import LocalEmbedder
+    embedder = LocalEmbedder()
+    return embedder, embedder._backend_name
 
 
-def _git_value(*args: str) -> str:
-    return subprocess.check_output(
-        ["git", *args], cwd=ROOT_DIR, text=True, encoding="utf-8"
-    ).strip()
+def load_queries(path: Path) -> list[dict]:
+    try:
+        import yaml
+    except ImportError:
+        raise SystemExit("Cần pyyaml để đọc benchmark_queries.yaml: pip install pyyaml")
+    queries = yaml.safe_load(path.read_text(encoding="utf-8"))["queries"]
+    if len(queries) != 5:
+        raise SystemExit(f"Contract B yêu cầu đúng 5 câu hỏi, file có {len(queries)}.")
+    return queries
 
 
-def _rank_of_gold(results: list[dict[str, Any]], gold_doc_id: str) -> int:
-    for index, result in enumerate(results, start=1):
-        if result.get("metadata", {}).get("doc_id") == gold_doc_id:
-            return index
-    return 99
-
-
-def build_rows(queries, store, member_branch: str, params: str) -> list[dict[str, Any]]:
-    rows: list[dict[str, Any]] = []
-    collection_size = store.get_collection_size()
-    for query in queries:
-        metadata_filter = query.get("metadata_filter")
-        if metadata_filter:
-            results = store.search_with_filter(
-                str(query["question"]), top_k=10, metadata_filter=metadata_filter
-            )
-        else:
-            results = store.search(str(query["question"]), top_k=10)
-
-        rank = _rank_of_gold(results, str(query["gold_doc_id"]))
-        top_three = results[:3]
-        top_doc_ids = [
-            str(result.get("metadata", {}).get("doc_id", "unknown"))
-            for result in top_three
-        ]
-        # Điểm này phản ánh retrieval. R3 vẫn phải duyệt câu trả lời agent trước khi chốt 2 điểm.
-        rubric_score = 2 if rank == 1 else 1 if rank <= 3 else 0
-        rows.append(
-            {
-                "query_id": query["id"],
-                "member_branch": member_branch,
-                "strategy": "heading",
-                "params": params,
-                "n_chunks_total": collection_size,
-                "rank_of_gold": rank,
-                "hit_top3": "true" if rank <= 3 else "false",
-                "top1_score": f"{top_three[0]['score']:.4f}" if top_three else "0.0000",
-                "top1_doc_id": top_doc_ids[0] if top_doc_ids else "",
-                "top3_doc_ids": "|".join(top_doc_ids),
-                "rubric_score": rubric_score,
-            }
-        )
-    return rows
-
-
-def write_contract_csv(
-    path: Path,
-    rows: list[dict[str, Any]],
-    backend_name: str,
-    source_commit: str,
-) -> None:
-    path.parent.mkdir(parents=True, exist_ok=True)
-    with path.open("w", encoding="utf-8", newline="") as handle:
-        handle.write(
-            f"# corpus/query freeze confirmed; main commit={source_commit}; run_date={date.today().isoformat()}\n"
-        )
-        handle.write(f"# EMBEDDING_PROVIDER non-mock; backend={backend_name}\n")
-        handle.write("# individual core verification: 42/42 tests passed\n")
-        writer = csv.DictWriter(handle, fieldnames=CSV_COLUMNS)
-        writer.writeheader()
-        writer.writerows(rows)
-
-
-def parse_args() -> argparse.Namespace:
-    parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("--chunker", choices=("heading",), default="heading")
-    parser.add_argument("--top-k", type=int, default=3, help="Contract C cố định top-k=3")
-    parser.add_argument("--docs", default="data/k3_university")
-    parser.add_argument("--queries", default="data/benchmark_queries.yaml")
-    parser.add_argument("--max-level", type=int, default=2)
-    parser.add_argument("--max-chars", type=int, default=1200)
-    parser.add_argument("--member-branch", default="role2-strategy-lead")
-    parser.add_argument(
-        "--output", default="report/benchmark/role2-strategy-lead_heading.csv"
-    )
-    parser.add_argument("--validate-only", action="store_true")
-    return parser.parse_args()
+def rank_of_gold(hits: list[dict], gold_doc_id: str) -> int:
+    """Vị trí (1-based) của chunk đầu tiên thuộc tài liệu gold; 99 nếu ngoài top-10."""
+    for position, hit in enumerate(hits, start=1):
+        if hit["metadata"].get("doc_id") == gold_doc_id:
+            return position
+    return RANK_NOT_FOUND
 
 
 def main() -> int:
-    args = parse_args()
-    if args.top_k != 3:
-        raise SystemExit("Contract C yêu cầu --top-k 3.")
-    if args.max_level <= 0 or args.max_chars <= 0:
-        raise SystemExit("max-level và max-chars phải lớn hơn 0.")
+    parser = argparse.ArgumentParser(description=__doc__,
+                                     formatter_class=argparse.RawDescriptionHelpFormatter)
+    parser.add_argument("--chunker", required=True,
+                        choices=["fixed", "sentence", "recursive", "heading"])
+    parser.add_argument("--top-k", type=int, default=3)
+    parser.add_argument("--chunk-size", type=int, default=500)
+    parser.add_argument("--overlap", type=int, default=50)
+    parser.add_argument("--max-sentences", type=int, default=3)
+    parser.add_argument("--max-chars", type=int, default=800,
+                        help="chỉ dùng cho --chunker heading")
+    parser.add_argument("--data-dir", default="data/k3_university")
+    parser.add_argument("--queries", default="data/benchmark_queries.yaml")
+    parser.add_argument("--branch", default=None, help="mặc định: lấy từ git")
+    parser.add_argument("--provider", default="local", choices=["local", "mock"],
+                        help="mock CHỈ để thử nhanh; số liệu từ mock không dùng làm bằng chứng")
+    parser.add_argument("--out-dir", default="report/benchmark")
+    args = parser.parse_args()
 
-    query_path = ROOT_DIR / args.queries
-    docs_path = ROOT_DIR / args.docs
-    try:
-        queries = validate_inputs(query_path, docs_path)
-    except (OSError, ValueError) as exc:
-        raise SystemExit(f"Input chưa hợp lệ: {exc}") from exc
+    branch = args.branch
+    if not branch:
+        import subprocess
+        branch = subprocess.run(["git", "rev-parse", "--abbrev-ref", "HEAD"],
+                                capture_output=True, text=True, cwd=REPO_ROOT
+                                ).stdout.strip() or "unknown"
 
-    print("Contract B hợp lệ: 5 query, gold_doc_id khớp corpus, có metadata filter.")
-    if args.validate_only:
-        return 0
+    embedder, backend = select_embedder(args.provider)
+    print(f"backend      : {backend}")
+    if "mock" in backend.lower() and args.provider != "mock":
+        raise SystemExit(
+            "DỪNG: LocalEmbedder đã âm thầm rơi về mock. Mock cho điểm gần như ngẫu "
+            "nhiên — kết luận rút ra từ nó là kết luận từ nhiễu. Xem README mục "
+            "'Tùy Chọn Mô Hình Nhúng'."
+        )
 
-    load_dotenv(ROOT_DIR / ".env", override=False)
-    provider = os.getenv("EMBEDDING_PROVIDER", "").strip().lower()
-    try:
-        embedder, backend_name = select_embedder(provider)
-    except RuntimeError as exc:
-        raise SystemExit(f"Không thể chạy benchmark chính thức: {exc}") from exc
+    chunker, params = build_chunker(args.chunker, args.chunk_size, args.overlap,
+                                    args.max_sentences, args.max_chars)
+    store = build_knowledge_base(args.data_dir, embedder, chunker=chunker)
+    total_chunks = store.get_collection_size()
+    doc_ids = {r["metadata"].get("doc_id") for r in store._store}
+    print(f"chiến lược   : {args.chunker} ({params})")
+    print(f"corpus       : {args.data_dir}")
+    print(f"đã nạp       : {total_chunks} chunk từ {len(doc_ids)} tài liệu")
 
-    chunker = HeadingChunker(max_level=args.max_level, max_chars=args.max_chars)
-    store = build_knowledge_base(
-        docs_path,
-        embedding_fn=embedder,
-        chunker=chunker,
-        collection_name="role2_heading_benchmark",
-    )
-    params = f"max_level={args.max_level},max_chars={args.max_chars}"
-    rows = build_rows(queries, store, args.member_branch, params)
-    output_path = ROOT_DIR / args.output
-    write_contract_csv(output_path, rows, backend_name, _git_value("rev-parse", "--short", "origin/main"))
-    print(f"Embedding backend: {backend_name}")
-    print(f"Đã ghi {len(rows)} dòng vào {output_path.relative_to(ROOT_DIR)}")
+    if total_chunks == 0:
+        raise SystemExit("DỪNG: store rỗng — kiểm lại --data-dir và front matter.")
+
+    queries = load_queries(Path(args.queries))
+    rows = []
+
+    print(f"\n{'#':<4}{'rank':>6}{'top1':>9}  {'lọc':<8}{'tài liệu hạng 1'}")
+    print("-" * 74)
+
+    for query in queries:
+        gold = query["gold_doc_id"]
+        metadata_filter = query.get("metadata_filter")
+
+        deep = store.search_with_filter(query["question"], top_k=RANK_SEARCH_DEPTH,
+                                        metadata_filter=metadata_filter)
+        hits = deep[: args.top_k]
+        rank = rank_of_gold(deep, gold)
+
+        # Chấm phần TRUY XUẤT theo docs/SCORING.md. Điểm 2 còn phụ thuộc câu trả
+        # lời của agent — người chạy tự hạ xuống 1 nếu câu trả lời thiếu chi tiết.
+        retrieval_score = 2 if rank == 1 else (1 if rank <= 3 else 0)
+
+        rows.append({
+            "query_id": query["id"],
+            "member_branch": branch,
+            "strategy": args.chunker,
+            "params": params,
+            "n_chunks_total": total_chunks,
+            "rank_of_gold": rank,
+            "hit_top3": str(rank <= 3).lower(),
+            "top1_score": f"{hits[0]['score']:.4f}" if hits else "0.0000",
+            "top1_doc_id": hits[0]["metadata"].get("doc_id", "") if hits else "",
+            "top3_doc_ids": "|".join(h["metadata"].get("doc_id", "") for h in hits[:3]),
+            "rubric_score": retrieval_score,
+        })
+
+        flag = "có" if metadata_filter else "-"
+        top1 = rows[-1]["top1_doc_id"]
+        mark = "" if rank == 1 else ("  <- gold hạng %d" % rank if rank <= 3 else "  <- TRƯỢT")
+        print(f"{query['id']:<4}{rank:>6}{rows[-1]['top1_score']:>9}  {flag:<8}{top1}{mark}")
+
+    out_dir = Path(args.out_dir)
+    out_dir.mkdir(parents=True, exist_ok=True)
+    out_path = out_dir / f"{branch}_{args.chunker}.csv"
+    with out_path.open("w", encoding="utf-8", newline="") as handle:
+        # Ba dòng điều kiện hợp lệ theo Contract C — không có chúng thì người đọc
+        # không biết số này chạy bằng embedder nào, trên corpus nào.
+        handle.write(f"# backend={backend}\n")
+        handle.write(f"# corpus={args.data_dir} chunks={total_chunks} docs={len(doc_ids)}\n")
+        handle.write(f"# queries={args.queries} top_k={args.top_k} branch={branch}\n")
+        writer = csv.DictWriter(handle, fieldnames=FIELDS)
+        writer.writeheader()
+        writer.writerows(rows)
+
+    total = sum(r["rubric_score"] for r in rows)
+    hits3 = sum(1 for r in rows if r["hit_top3"] == "true")
+    print(f"\ntop-3 trúng  : {hits3}/5")
+    print(f"điểm truy xuất: {total}/10  (chưa trừ theo chất lượng câu trả lời)")
+    print(f"đã ghi       : {out_path}")
     return 0
 
 
