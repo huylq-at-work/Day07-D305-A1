@@ -1,0 +1,43 @@
+{
+  "doc_id": "vinuni-academic-regulations-undergrad",
+  "chunk_size": 500,
+  "char_count": 68770,
+  "embedding_backend": "n/a — thống kê cấu trúc, không dùng embedding",
+  "comparison": {
+    "fixed_size": {
+      "count": 153,
+      "avg_length": 499.1503267973856,
+      "std_length": 10.47547477628715,
+      "min_length": 370,
+      "max_length": 500
+    },
+    "by_sentences": {
+      "count": 154,
+      "avg_length": 443.961038961039,
+      "std_length": 205.62590174647366,
+      "min_length": 156,
+      "max_length": 1868
+    },
+    "recursive": {
+      "count": 183,
+      "avg_length": 373.8032786885246,
+      "std_length": 101.00383907741272,
+      "min_length": 55,
+      "max_length": 500
+    }
+  },
+  "sample_chunks": {
+    "fixed_size": [
+      "# Academic Regulations for Full-Time Undergraduate Programs\n\nChapter I General Provision\n\nArticle 1. Governing Scope and Regulated Entities\n\nThis document specifies rules and regulations that govern educational arrangements, examinations, assessment, grading, and graduation requirements based on an academic credit system for full-time undergraduate students at VinUniversity. These rules and regulations also apply to exchange and visiting students.\n\nArticle 2. Medium of Instruction and Assessment",
+      ".\n\nArticle 2. Medium of Instruction and Assessment\n\nUnless otherwise approved by the University for a specific course or program of study, English is the medium of instruction (including lectures, tutorials, and laboratories) at the University. Individual instruction or consultation may be in any language.\n\nThe College of Arts and Sciences may teach in Vietnamese and use Vietnamese reading materials for the required courses of the Ministry of Education and Training. In such a case, the materials"
+    ],
+    "by_sentences": [
+      "# Academic Regulations for Full-Time Undergraduate Programs\n\nChapter I General Provision\n\nArticle 1. Governing Scope and Regulated Entities\n\nThis document specifies rules and regulations that govern educational arrangements, examinations, assessment, grading, and graduation requirements based on an academic credit system for full-time undergraduate students at VinUniversity. These rules and regulations also apply to exchange and visiting students.",
+      "Article 2. Medium of Instruction and Assessment\n\nUnless otherwise approved by the University for a specific course or program of study, English is the medium of instruction (including lectures, tutorials, and laboratories) at the University. Individual instruction or consultation may be in any language."
+    ],
+    "recursive": [
+      "# Academic Regulations for Full-Time Undergraduate Programs\n\nChapter I General Provision\n\nArticle 1. Governing Scope and Regulated Entities\n\nThis document specifies rules and regulations that govern educational arrangements, examinations, assessment, grading, and graduation requirements based on an academic credit system for full-time undergraduate students at VinUniversity. These rules and regulations also apply to exchange and visiting students.\n\nArticle 2. Medium of Instruction and Assessment",
+      "Unless otherwise approved by the University for a specific course or program of study, English is the medium of instruction (including lectures, tutorials, and laboratories) at the University. Individual instruction or consultation may be in any language."
+    ]
+  }
+}

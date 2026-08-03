@@ -1,0 +1,82 @@
+﻿============================= test session starts =============================
+platform win32 -- Python 3.14.6, pytest-9.1.1, pluggy-1.6.0 -- D:\VinUni\Lab07\Day07-D305-A1\.venv\Scripts\python.exe
+cachedir: .pytest_cache
+rootdir: D:\VinUni\Lab07\Day07-D305-A1
+collecting ... collected 42 items
+
+tests/test_solution.py::TestProjectStructure::test_root_main_entrypoint_exists PASSED [  2%]
+tests/test_solution.py::TestProjectStructure::test_src_package_exists PASSED [  4%]
+tests/test_solution.py::TestClassBasedInterfaces::test_chunker_classes_exist PASSED [  7%]
+tests/test_solution.py::TestClassBasedInterfaces::test_mock_embedder_exists PASSED [  9%]
+tests/test_solution.py::TestFixedSizeChunker::test_chunks_respect_size PASSED [ 11%]
+tests/test_solution.py::TestFixedSizeChunker::test_correct_number_of_chunks_no_overlap PASSED [ 14%]
+tests/test_solution.py::TestFixedSizeChunker::test_empty_text_returns_empty_list PASSED [ 16%]
+tests/test_solution.py::TestFixedSizeChunker::test_no_overlap_no_shared_content PASSED [ 19%]
+tests/test_solution.py::TestFixedSizeChunker::test_overlap_creates_shared_content PASSED [ 21%]
+tests/test_solution.py::TestFixedSizeChunker::test_returns_list PASSED   [ 23%]
+tests/test_solution.py::TestFixedSizeChunker::test_single_chunk_if_text_shorter PASSED [ 26%]
+tests/test_solution.py::TestSentenceChunker::test_chunks_are_strings FAILED [ 28%]
+tests/test_solution.py::TestSentenceChunker::test_respects_max_sentences FAILED [ 30%]
+tests/test_solution.py::TestSentenceChunker::test_returns_list FAILED    [ 33%]
+tests/test_solution.py::TestSentenceChunker::test_single_sentence_max_gives_many_chunks FAILED [ 35%]
+tests/test_solution.py::TestRecursiveChunker::test_chunks_within_size_when_possible FAILED [ 38%]
+tests/test_solution.py::TestRecursiveChunker::test_empty_separators_falls_back_gracefully FAILED [ 40%]
+tests/test_solution.py::TestRecursiveChunker::test_handles_double_newline_separator FAILED [ 42%]
+tests/test_solution.py::TestRecursiveChunker::test_returns_list FAILED   [ 45%]
+tests/test_solution.py::TestEmbeddingStore::test_add_documents_increases_size FAILED [ 47%]
+tests/test_solution.py::TestEmbeddingStore::test_add_more_increases_further FAILED [ 50%]
+tests/test_solution.py::TestEmbeddingStore::test_initial_size_is_zero FAILED [ 52%]
+tests/test_solution.py::TestEmbeddingStore::test_search_results_have_content_key FAILED [ 54%]
+tests/test_solution.py::TestEmbeddingStore::test_search_results_have_score_key FAILED [ 57%]
+tests/test_solution.py::TestEmbeddingStore::test_search_results_sorted_by_score_descending FAILED [ 59%]
+tests/test_solution.py::TestEmbeddingStore::test_search_returns_at_most_top_k FAILED [ 61%]
+tests/test_solution.py::TestEmbeddingStore::test_search_returns_list FAILED [ 64%]
+tests/test_solution.py::TestKnowledgeBaseAgent::test_answer_non_empty FAILED [ 66%]
+tests/test_solution.py::TestKnowledgeBaseAgent::test_answer_returns_string FAILED [ 69%]
+tests/test_solution.py::TestComputeSimilarity::test_identical_vectors_return_1 FAILED [ 71%]
+tests/test_solution.py::TestComputeSimilarity::test_opposite_vectors_return_minus_1 FAILED [ 73%]
+tests/test_solution.py::TestComputeSimilarity::test_orthogonal_vectors_return_0 FAILED [ 76%]
+tests/test_solution.py::TestComputeSimilarity::test_zero_vector_returns_0 FAILED [ 78%]
+tests/test_solution.py::TestCompareChunkingStrategies::test_counts_are_positive FAILED [ 80%]
+tests/test_solution.py::TestCompareChunkingStrategies::test_each_strategy_has_count_and_avg_length FAILED [ 83%]
+tests/test_solution.py::TestCompareChunkingStrategies::test_returns_three_strategies FAILED [ 85%]
+tests/test_solution.py::TestEmbeddingStoreSearchWithFilter::test_filter_by_department FAILED [ 88%]
+tests/test_solution.py::TestEmbeddingStoreSearchWithFilter::test_no_filter_returns_all_candidates FAILED [ 90%]
+tests/test_solution.py::TestEmbeddingStoreSearchWithFilter::test_returns_at_most_top_k FAILED [ 92%]
+tests/test_solution.py::TestEmbeddingStoreDeleteDocument::test_delete_reduces_collection_size FAILED [ 95%]
+tests/test_solution.py::TestEmbeddingStoreDeleteDocument::test_delete_returns_false_for_nonexistent_doc FAILED [ 97%]
+tests/test_solution.py::TestEmbeddingStoreDeleteDocument::test_delete_returns_true_for_existing_doc FAILED [100%]
+
+=========================== short test summary info ===========================
+FAILED tests/test_solution.py::TestSentenceChunker::test_chunks_are_strings
+FAILED tests/test_solution.py::TestSentenceChunker::test_respects_max_sentences
+FAILED tests/test_solution.py::TestSentenceChunker::test_returns_list - NotIm...
+FAILED tests/test_solution.py::TestSentenceChunker::test_single_sentence_max_gives_many_chunks
+FAILED tests/test_solution.py::TestRecursiveChunker::test_chunks_within_size_when_possible
+FAILED tests/test_solution.py::TestRecursiveChunker::test_empty_separators_falls_back_gracefully
+FAILED tests/test_solution.py::TestRecursiveChunker::test_handles_double_newline_separator
+FAILED tests/test_solution.py::TestRecursiveChunker::test_returns_list - NotI...
+FAILED tests/test_solution.py::TestEmbeddingStore::test_add_documents_increases_size
+FAILED tests/test_solution.py::TestEmbeddingStore::test_add_more_increases_further
+FAILED tests/test_solution.py::TestEmbeddingStore::test_initial_size_is_zero
+FAILED tests/test_solution.py::TestEmbeddingStore::test_search_results_have_content_key
+FAILED tests/test_solution.py::TestEmbeddingStore::test_search_results_have_score_key
+FAILED tests/test_solution.py::TestEmbeddingStore::test_search_results_sorted_by_score_descending
+FAILED tests/test_solution.py::TestEmbeddingStore::test_search_returns_at_most_top_k
+FAILED tests/test_solution.py::TestEmbeddingStore::test_search_returns_list
+FAILED tests/test_solution.py::TestKnowledgeBaseAgent::test_answer_non_empty
+FAILED tests/test_solution.py::TestKnowledgeBaseAgent::test_answer_returns_string
+FAILED tests/test_solution.py::TestComputeSimilarity::test_identical_vectors_return_1
+FAILED tests/test_solution.py::TestComputeSimilarity::test_opposite_vectors_return_minus_1
+FAILED tests/test_solution.py::TestComputeSimilarity::test_orthogonal_vectors_return_0
+FAILED tests/test_solution.py::TestComputeSimilarity::test_zero_vector_returns_0
+FAILED tests/test_solution.py::TestCompareChunkingStrategies::test_counts_are_positive
+FAILED tests/test_solution.py::TestCompareChunkingStrategies::test_each_strategy_has_count_and_avg_length
+FAILED tests/test_solution.py::TestCompareChunkingStrategies::test_returns_three_strategies
+FAILED tests/test_solution.py::TestEmbeddingStoreSearchWithFilter::test_filter_by_department
+FAILED tests/test_solution.py::TestEmbeddingStoreSearchWithFilter::test_no_filter_returns_all_candidates
+FAILED tests/test_solution.py::TestEmbeddingStoreSearchWithFilter::test_returns_at_most_top_k
+FAILED tests/test_solution.py::TestEmbeddingStoreDeleteDocument::test_delete_reduces_collection_size
+FAILED tests/test_solution.py::TestEmbeddingStoreDeleteDocument::test_delete_returns_false_for_nonexistent_doc
+FAILED tests/test_solution.py::TestEmbeddingStoreDeleteDocument::test_delete_returns_true_for_existing_doc
+======================== 31 failed, 11 passed in 0.08s ========================
