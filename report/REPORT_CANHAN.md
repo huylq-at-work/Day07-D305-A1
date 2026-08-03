@@ -15,29 +15,39 @@
 ### Độ tương tự Cosine (Cosine Similarity) (Bài tập 1.1)
 
 **Độ tương tự cosine cao (High cosine similarity) nghĩa là gì?**
-> *Viết 1-2 câu:*
+> Độ tương tự cosine cao, gần `1`, nghĩa là hai vector embedding có hướng gần nhau trong
+> không gian vector. Với một embedder ngữ nghĩa tốt, điều này thường cho thấy hai đoạn văn
+> có nội dung hoặc ý nghĩa tương tự, dù cách dùng từ có thể khác nhau.
 
 **Ví dụ có độ tương tự CAO:**
-- Câu A:
-- Câu B:
-- Tại sao tương đồng:
+- Câu A: Sinh viên được rút học phần đã đăng ký muộn nhất khi nào?
+- Câu B: Hạn chót để sinh viên hủy một môn đã đăng ký là bao giờ?
+- Tại sao tương đồng: Hai câu cùng hỏi thời hạn bỏ một học phần; “rút”/“hủy” và
+  “muộn nhất”/“hạn chót” là các cách diễn đạt gần nghĩa.
 
 **Ví dụ có độ tương tự THẤP:**
-- Câu A:
-- Câu B:
-- Tại sao khác:
+- Câu A: Hạn nộp học phí học kỳ 1 là ngày nào?
+- Câu B: Công thức nấu phở bò truyền thống của Hà Nội.
+- Tại sao khác: Một câu thuộc quy định học vụ, câu còn lại thuộc ẩm thực; chúng không
+  chia sẻ chủ đề hay mục đích thông tin.
 
 **Tại sao độ tương tự cosine (cosine similarity) được ưu tiên hơn khoảng cách Euclid (Euclidean distance) cho text embeddings?**
-> *Viết 1-2 câu:*
+> Cosine tập trung vào góc giữa hai vector nên ít bị ảnh hưởng bởi độ lớn vector, trong khi
+> khoảng cách Euclid thay đổi theo cả hướng lẫn độ lớn. Với text embedding, hướng thường
+> biểu diễn quan hệ ngữ nghĩa hữu ích hơn độ dài tuyệt đối của vector.
 
 ### Bài toán tính toán Chunking (Bài tập 1.2)
 
 **Tài liệu 10,000 ký tự, chunk_size=500, overlap=50. Bao nhiêu chunks?**
-> *Trình bày phép tính:*
-> *Đáp án:*
+> Bước trượt là `500 - 50 = 450`. Số chunk là
+> `1 + ceil((10,000 - 500) / 450) = 1 + ceil(21.111...) = 23`.
+>
+> **Đáp án: 23 chunks.**
 
 **Nếu độ chồng chéo (overlap) tăng lên 100, số lượng chunk thay đổi thế nào? Tại sao muốn độ chồng chéo nhiều hơn?**
-> *Viết 1-2 câu:*
+> Bước trượt giảm còn `500 - 100 = 400`, nên số chunk tăng thành
+> `1 + ceil(9,500 / 400) = 25`. Overlap lớn hơn giúp giữ ngữ cảnh ở ranh giới chunk và
+> giảm nguy cơ cắt mất một ý, đổi lại tốn thêm lưu trữ và phép tính embedding/search.
 
 ---
 
@@ -154,16 +164,24 @@ tests/test_solution.py::TestEmbeddingStoreDeleteDocument::test_delete_returns_tr
 
 ## 4. Dự đoán độ tương tự (Similarity Predictions) — Cá nhân (5 điểm)
 
+Tôi ghi dự đoán trước khi chạy. Do phần model local là tùy chọn và không được cài trong môi
+trường này, điểm thực tế dưới đây dùng `MockEmbedder` của bài cùng `compute_similarity()`.
+Mock tạo vector xác định theo hash để kiểm tra code, **không** biểu diễn ngữ nghĩa; vì vậy
+kết quả này dùng để chứng minh pipeline tính cosine hoạt động, không dùng để chọn strategy.
+
 | Cặp | Câu A | Câu B | Dự đoán | Điểm thực tế | Đúng? |
 |------|-----------|-----------|---------|--------------|-------|
-| 1 | | | cao / thấp | | |
-| 2 | | | cao / thấp | | |
-| 3 | | | cao / thấp | | |
-| 4 | | | cao / thấp | | |
-| 5 | | | cao / thấp | | |
+| 1 | Sinh viên được rút học phần đã đăng ký muộn nhất khi nào? | Hạn chót để sinh viên hủy một môn đã đăng ký là bao giờ? | Cao (`0.85`) | `0.0960` | Không |
+| 2 | Sinh viên được đăng ký tối đa bao nhiêu tín chỉ trong một học kỳ? | What is the maximum number of credits a student may register in one semester? | Cao (`0.75`) | `0.2055` | Không |
+| 3 | Quy định về rút học phần đã đăng ký. | Quy định về chuyển đổi tín chỉ từ trường khác. | Trung bình (`0.55`) | `-0.2007` | Không |
+| 4 | Sinh viên rút học phần đã đăng ký trong học kỳ. | Sinh viên rút tiền mặt tại cây ATM trong khuôn viên trường. | Thấp (`0.35`) | `0.0765` | Có, cùng mức thấp |
+| 5 | Hạn nộp học phí học kỳ 1 là ngày nào? | Công thức nấu phở bò truyền thống của Hà Nội. | Thấp nhất (`0.05`) | `0.1639` | Không, không thấp nhất |
 
 **Kết quả nào bất ngờ nhất? Điều này nói gì về cách embeddings biểu diễn ý nghĩa?**
-> *Viết 2-3 câu:*
+> Cặp 1 bất ngờ nhất: hai câu gần như đồng nghĩa nhưng chỉ đạt `0.0960`, trong khi cặp 5
+> hoàn toàn khác chủ đề lại đạt `0.1639`. Điều này không phản ánh cách một semantic embedding
+> tốt biểu diễn ý nghĩa mà cho thấy `MockEmbedder` chỉ tạo vector kiểm thử từ hash; muốn kết
+> luận về ngữ nghĩa phải dùng một backend embedding thật và giữ cùng backend khi so sánh.
 
 ---
 
@@ -171,18 +189,30 @@ tests/test_solution.py::TestEmbeddingStoreDeleteDocument::test_delete_returns_tr
 
 Chạy **5 câu hỏi đánh giá của nhóm** trên mã nguồn cá nhân của bạn trong gói `src`. **5 câu hỏi này phải trùng với các thành viên cùng nhóm** (xem `REPORT_NHOM.md`).
 
+**Cấu hình đã chạy:** `HeadingChunker(max_level=2, max_chars=1200)`, 10 tài liệu, tổng cộng
+`218` chunk, `top_k=3`, `MockEmbedder`. Năm query lấy nguyên từ
+`data/benchmark_queries.yaml`; tại thời điểm chạy file vẫn là bản nháp, chưa QUERY FREEZE.
+Đây là kết quả cá nhân để kiểm tra pipeline và phân tích failure, **không phải** CSV benchmark
+non-mock chính thức của nhóm.
+
 | # | Câu hỏi (Query) | Top-1 Chunk truy xuất được (tóm tắt) | Điểm Score | Có liên quan không? (Relevant) | Câu trả lời của Agent (tóm tắt) |
 |---|-------|--------------------------------|-------|-----------|------------------------|
-| 1 | | | | | |
-| 2 | | | | | |
-| 3 | | | | | |
-| 4 | | | | | |
-| 5 | | | | | |
+| 1 | VinUni được đăng ký tối đa bao nhiêu tín chỉ trong học kỳ chính? | `ou-quy-che-hoc-vu-tin-chi` — Điều 5 về thời gian và kế hoạch đào tạo | `0.3344` | Không; top-1 sai trường và không có mốc 22 tín chỉ | Agent demo không đủ context để kết luận 22 tín chỉ; context đang nói về thời gian khóa học. |
+| 2 | Được withdraw muộn nhất khi nào và tối đa bao nhiêu tín chỉ? | `ou-quy-che-hoc-vu-tin-chi` — Điều 27 về sinh viên không tốt nghiệp | `0.3497` | Không; không có quy định 30% thời lượng/18 tín chỉ | Agent demo không trả lời được thời hạn và giới hạn rút học phần. |
+| 3 | Chuyển tín chỉ từ trường cũ: tối đa bao nhiêu và nộp lúc nào? | `vinuni-academic-regulations-undergrad` — tiêu đề Chương I, không có nội dung chi tiết | `0.4336` | Không; đúng miền VinUni nhưng sai đoạn, thiếu mốc 50% và tuần đầu học kỳ | Agent demo chỉ nhận tiêu đề chung nên câu trả lời thiếu toàn bộ chi tiết cần kiểm chứng. |
+| 4 | Chưa nộp học phí thì có bị mất môn không? | `vnuf-huong-dan-quy-che-tin-chi` — Điều 10 về khối lượng học tập tối thiểu | `0.2922` | Không; sai trường và không nói việc UEH hủy học phần chưa đóng tiền | Agent demo nói về số tín chỉ đăng ký, không trả lời hậu quả chậm đóng học phí. |
+| 5 | Sau bảo lưu phải xin quay lại trước bao lâu? | `vinuni-leave-of-absence` — phần Purpose/Scope và đầu quy trình LOA | `0.4061` | Chưa đủ; đúng tài liệu/chủ đề nhưng chunk top-1 chưa chứa mốc 1 tháng hay 1 tuần | Agent demo nhận đúng chủ đề bảo lưu nhưng không đủ căn cứ để xử lý hai mốc mâu thuẫn. |
 
-**Bao nhiêu câu hỏi trả về chunk có liên quan trong top-3?** __ / 5
+**Bao nhiêu câu hỏi trả về chunk có liên quan trong top-3?** 0 / 5 theo tiêu chí nghiêm
+ngặt “chunk phải chứa thông tin trả lời”. Nếu chỉ chấm theo `gold_doc_id`, tài liệu chuẩn có
+trong top-3 ở 3/5 câu (Q1 hạng 2, Q4 hạng 3, Q5 hạng 1), cho thấy chỉ dùng `doc_id` có thể
+đánh giá lạc quan hơn chất lượng chunk thực tế.
 
 **Điều hay nhất tôi học được từ thành viên khác / nhóm khác (qua demo):**
-> *Viết 2-3 câu:*
+> Tôi học được rằng benchmark tốt phải có nhiều kiểu câu hỏi và gold answer kiểm chứng được,
+> không chỉ vài câu chứa đúng từ khóa của tài liệu. Đặc biệt Q5 của nhóm cho thấy lấy đúng
+> document vẫn chưa đủ: chunk phải chứa đúng điều khoản và agent phải nêu được mâu thuẫn giữa
+> hai nguồn thay vì chọn tùy ý một mốc thời gian.
 
 ---
 
@@ -190,9 +220,9 @@ Chạy **5 câu hỏi đánh giá của nhóm** trên mã nguồn cá nhân củ
 
 | Tiêu chí | Điểm tự đánh giá |
 |----------|-------------------|
-| Khởi động (Warm-up) | / 5 |
-| Hướng tiếp cận của tôi (My Approach) | / 10 |
-| Hoàn thiện code (Core Implementation — tests) | / 30 |
-| Dự đoán độ tương tự (Similarity Predictions) | / 5 |
-| Kết quả truy xuất của tôi (Competition Results) | / 10 |
-| **Tổng phần cá nhân** | **/ 60** |
+| Khởi động (Warm-up) | 5 / 5 |
+| Hướng tiếp cận của tôi (My Approach) | 10 / 10 |
+| Hoàn thiện code (Core Implementation — tests) | 30 / 30 |
+| Dự đoán độ tương tự (Similarity Predictions) | 5 / 5 |
+| Kết quả truy xuất của tôi (Competition Results) | 6 / 10 |
+| **Tổng phần cá nhân** | **56 / 60** |
