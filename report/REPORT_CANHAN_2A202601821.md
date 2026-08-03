@@ -64,7 +64,49 @@ Giải thích cách tiếp cận của bạn khi lập trình (implement) các p
 ### Tác tử KnowledgeBaseAgent
 
 **`answer`** — hướng tiếp cận:
-> *Viết 2-3 câu: cấu trúc prompt? Cách đưa ngữ cảnh (inject context) vào thế nào?*
+
+Truy xuất bằng `search_with_filter()` (bao luôn `search()` khi không có bộ lọc), rồi ghép
+ngữ cảnh dưới dạng khối đánh số `[1] [2] [3]`, mỗi khối kèm `doc_id` và `score`. Đánh số là
+để câu trả lời truy ngược được về đúng chunk nào — không có nó thì không chấm được tiêu chí
+*Grounding Quality*. Prompt đặt bốn ràng buộc: chỉ dùng ngữ cảnh, dẫn số nguồn cho từng ý,
+nêu rõ khi các nguồn mâu thuẫn, và nói "không đủ thông tin" thay vì suy đoán. Khi truy xuất
+trả về rỗng thì `answer()` trả câu "không tìm thấy thông tin liên quan" mà **không gọi
+`llm_fn`** — trả lời "không biết" đúng lúc là hành vi đúng của RAG, không phải thất bại.
+
+#### Phần mở rộng tự thêm — `scripts/extractive_llm.py`
+
+> **KHÔNG PHẢI YÊU CẦU CỦA ĐỀ.** `exercises.md` chỉ yêu cầu `answer()` truy xuất → tạo
+> prompt → gọi `llm_fn`, và `main.py` cung cấp sẵn `demo_llm` (in lại prompt). Toàn bộ
+> phần dưới đây là do tôi tự thêm, nằm ngoài `src/`, và có thể bỏ đi mà không ảnh hưởng
+> tới 42/42 test.
+
+Lý do thêm: `docs/SCORING.md` chấm 2 điểm cho *"câu trả lời của tác tử chính xác"* và
+`docs/EVALUATION.md` bắt xác minh câu trả lời với gold answer — nhưng repo không cấp LLM
+thật, cũng không nói lấy API key ở đâu. Với `demo_llm` in lại prompt thì **không xác minh
+được gì**. Đây là khoảng trống trong bộ tài liệu của đề, và tôi lấp bằng một tầng trả lời
+chạy offline.
+
+`ExtractiveLLM` **không sinh ra chữ mới**: nó tách các câu có sẵn trong chunk đã truy xuất,
+chấm từng câu bằng chính `compute_similarity()`, lấy tối đa 3 câu vượt ngưỡng 0.35, rồi ghép
+kèm `[n]`. Dưới ngưỡng thì trả về "ngữ cảnh không đủ liên quan" kèm điểm cao nhất đo được.
+Ngưỡng 0.35 lấy từ số đo ở Phần 4: cặp câu hoàn toàn không liên quan cho ~0.07, cặp cùng
+miền cho ~0.52.
+
+Gọi đây là "câu trả lời do mô hình sinh ra" là mô tả sai sản phẩm. Nó không diễn giải, không
+tổng hợp hai nguồn thành một câu, không trả lời được câu hỏi cần suy luận.
+
+**Kết quả chạy trên 5 câu hỏi** ([`report/benchmark/ANSWERS.md`](benchmark/ANSWERS.md)): câu
+trả lời **sai ở hầu hết các câu** — nhưng sai vì tầng truy xuất đã hỏng (0/10), không phải
+vì tầng trả lời. Đây chính là điều đáng nói: chất lượng câu trả lời là **hệ quả** của chất
+lượng truy xuất, không cứu được bằng prompt.
+
+Ca đáng chú ý nhất là Q5. Tác tử trả lời bằng câu *"must submit applications no later than
+one month after a student's return to study at VinUniversity"* — nghe khớp hoàn hảo với câu
+hỏi "nộp đơn quay lại trước bao lâu", có cả "one month" lẫn "return to study". Nhưng câu đó
+nói về **hạn nộp hồ sơ chuyển đổi tín chỉ**, không phải quy trình quay lại sau bảo lưu. Một
+câu trả lời trông đúng, dẫn nguồn đầy đủ, truy ngược được về chunk thật — mà vẫn sai. Đó là
+kiểu lỗi nguy hiểm nhất của RAG, và là lý do tiêu chí *Factual Accuracy* tồn tại tách khỏi
+*Retrieval Precision*.
 
 ---
 

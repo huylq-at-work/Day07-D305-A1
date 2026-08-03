@@ -31,7 +31,8 @@ FIELDS = [
 ]
 
 
-def build_chunker(name: str, chunk_size: int, overlap: int, max_sentences: int):
+def build_chunker(name: str, chunk_size: int, overlap: int, max_sentences: int,
+                  max_chars: int = 800):
     """Trả về (chunker, chuỗi mô tả tham số) cho cột `params` của Contract C."""
     if name == "fixed":
         return FixedSizeChunker(chunk_size=chunk_size, overlap=overlap), \
@@ -48,7 +49,7 @@ def build_chunker(name: str, chunk_size: int, overlap: int, max_sentences: int):
             raise SystemExit(
                 "Chưa có scripts/custom_chunkers.py (HeadingChunker là phần của R2)."
             )
-        return HeadingChunker(), "level=2"
+        return HeadingChunker(max_chars=max_chars), f"max_level=2,max_chars={max_chars}"
     raise SystemExit(f"Chiến lược không hợp lệ: {name}")
 
 
@@ -90,6 +91,8 @@ def main() -> int:
     parser.add_argument("--chunk-size", type=int, default=500)
     parser.add_argument("--overlap", type=int, default=50)
     parser.add_argument("--max-sentences", type=int, default=3)
+    parser.add_argument("--max-chars", type=int, default=800,
+                        help="chỉ dùng cho --chunker heading")
     parser.add_argument("--data-dir", default="data/k3_university")
     parser.add_argument("--queries", default="data/benchmark_queries.yaml")
     parser.add_argument("--branch", default=None, help="mặc định: lấy từ git")
@@ -115,7 +118,7 @@ def main() -> int:
         )
 
     chunker, params = build_chunker(args.chunker, args.chunk_size, args.overlap,
-                                    args.max_sentences)
+                                    args.max_sentences, args.max_chars)
     store = build_knowledge_base(args.data_dir, embedder, chunker=chunker)
     total_chunks = store.get_collection_size()
     doc_ids = {r["metadata"].get("doc_id") for r in store._store}
