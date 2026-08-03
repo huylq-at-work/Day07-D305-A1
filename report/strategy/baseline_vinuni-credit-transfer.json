@@ -1,0 +1,43 @@
+{
+  "doc_id": "vinuni-credit-transfer",
+  "chunk_size": 500,
+  "char_count": 5143,
+  "embedding_backend": "n/a — thống kê cấu trúc, không dùng embedding",
+  "comparison": {
+    "fixed_size": {
+      "count": 12,
+      "avg_length": 474.4166666666667,
+      "std_length": 84.85031755325899,
+      "min_length": 193,
+      "max_length": 500
+    },
+    "by_sentences": {
+      "count": 9,
+      "avg_length": 568.2222222222222,
+      "std_length": 314.8670893418639,
+      "min_length": 173,
+      "max_length": 1162
+    },
+    "recursive": {
+      "count": 15,
+      "avg_length": 341.0,
+      "std_length": 134.49758362141677,
+      "min_length": 113,
+      "max_length": 497
+    }
+  },
+  "sample_chunks": {
+    "fixed_size": [
+      "# Procedural Guidelines for Credit Transfer Requests\n\n1. Purpose \n\nThe procedure outlines the credit transfer process to support the Article 13 of the Academic Regulations in implementing the policy in a manner consistent with the requirements of credits and its relevance with the policy.\n\n2. Area of application\n\nThese guidelines apply to all full-time students, who are currently enrolled and registered as undergraduate students, and wish to request a transfer of credits that earned from other e",
+      "est a transfer of credits that earned from other external study programs to their program at VinUni.\n\n3. Content\n\n3.1 Timeline\n\nSubmit the request between\nNormally processed by\n\nDuring the first week of the semester – applications must be submitted no later than the published due date as outlined in the Important Dates for enrolments for the study period.\nWithin 1 week after the add/drop period end\n\n3.2 Undergraduate Transfer Credit Requirements\n\nThe University does not accept courses taught in "
+    ],
+    "by_sentences": [
+      "# Procedural Guidelines for Credit Transfer Requests\n\n1. Purpose \n\nThe procedure outlines the credit transfer process to support the Article 13 of the Academic Regulations in implementing the policy in a manner consistent with the requirements of credits and its relevance with the policy. 2.",
+      "Area of application\n\nThese guidelines apply to all full-time students, who are currently enrolled and registered as undergraduate students, and wish to request a transfer of credits that earned from other external study programs to their program at VinUni. 3. Content\n\n3.1 Timeline\n\nSubmit the request between\nNormally processed by\n\nDuring the first week of the semester – applications must be submitted no later than the published due date as outlined in the Important Dates for enrolments for the study period."
+    ],
+    "recursive": [
+      "# Procedural Guidelines for Credit Transfer Requests\n\n1. Purpose \n\nThe procedure outlines the credit transfer process to support the Article 13 of the Academic Regulations in implementing the policy in a manner consistent with the requirements of credits and its relevance with the policy.\n\n2. Area of application",
+      "These guidelines apply to all full-time students, who are currently enrolled and registered as undergraduate students, and wish to request a transfer of credits that earned from other external study programs to their program at VinUni.\n\n3. Content\n\n3.1 Timeline\n\nSubmit the request between\nNormally processed by"
+    ]
+  }
+}
