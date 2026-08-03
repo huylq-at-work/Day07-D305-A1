@@ -190,34 +190,54 @@ API và không dùng `MockEmbedder`. Các phép đo đều gọi đúng `compute
 
 Chạy **5 câu hỏi đánh giá của nhóm** trên mã nguồn cá nhân của bạn trong gói `src`. **5 câu hỏi này phải trùng với các thành viên cùng nhóm** (xem `REPORT_NHOM.md`).
 
-**Cấu hình đã chạy:** `HeadingChunker(max_level=2, max_chars=1200)`, 10 tài liệu, tổng cộng
-`218` chunk, `top_k=3`, backend local
+**Cấu hình đã chạy:** `HeadingChunker(max_level=2, max_chars=800)`, 10 tài liệu, tổng cộng
+`318` chunk, `top_k=3`, backend local
 `sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2`. Năm query lấy nguyên từ
 `data/benchmark_queries.yaml`. Chỉ biến strategy là HeadingChunker; việc đọc front matter,
 gắn metadata/`doc_id`/`chunk_index` và nạp store đều dùng lại `build_knowledge_base()` của
 `ingest.py`. Bộ câu hỏi đã **QUERY FREEZE ngày 03/08/2026** và benchmark chạy sau khi merge
-`origin/main` commit `9c708b6`. CSV chính thức nằm tại
-`report/benchmark/role2-strategy-lead_heading.csv`; bảng đầy đủ preview và câu trả lời nằm tại
-`report/benchmark/role2-strategy-lead_heading_details.md`.
+`origin/main` commit `9c708b6`. Hai cấu hình được chạy với cùng dữ liệu/query/embedder:
+`report/benchmark/01203_NguyenChiHuong_heading.csv` và
+`report/benchmark/01203_NguyenChiHuong_recursive.csv`; bảng đầy đủ preview và câu trả lời
+nằm trong hai file `_details.md` tương ứng.
 
 | # | Top-3 theo thứ tự: `doc_id (score)` | Bằng chứng đáp án trong chunk | Câu trả lời agent và lý do | Rubric |
 |---|---|---|---|---:|
-| 1 | `registrar-policy-index (0.6536)`; `academic-regulations (0.6321)`; `credit-transfer (0.5830)` | Không chunk nào có `18-22 credits`; gold doc ở hạng 2 nhưng sai section | Agent trích các câu về concentration/chuyển tín chỉ, không trả lời giới hạn đăng ký | 0 |
-| 2 | `academic-regulations (0.6674)`; `academic-regulations (0.6658)`; `leave-of-absence (0.6623)` | Chunk hạng 2 giữ đủ `30%` và `maximum of 18 credits` | Agent lấy đúng chủ đề withdrawal nhưng bỏ hai số bắt buộc; bằng chứng không ở top-1 | 1 |
-| 3 | `academic-regulations (0.7017)`; `registrar-policy-index (0.6561)`; `credit-transfer (0.6233)` | Có gold doc hạng 3 nhưng top-3 không giữ đồng thời `50%` và `first week` | Agent trả nhầm mốc “one month after return”, thiếu giới hạn và thời điểm chuẩn | 0 |
-| 4 | `ueh-dang-ky-huy-hoc-phan (0.5074)`; cùng doc `(0.5002)`; cùng doc `(0.4904)` | Chunk hạng 2 có câu “bị hủy học phần do đóng học phí không đúng hạn” | Agent trích đúng hậu quả nhưng bằng chứng không đứng top-1 và thiếu điều kiện đầy đủ | 1 |
-| 5 | `academic-regulations (0.7349)`; `leave-of-absence (0.6310)`; `registrar-policy-index (0.6143)` | Gold doc ở hạng 2 nhưng sai section; thiếu cả mốc một tháng và một tuần | Agent trả nhầm quy định chuyển tín chỉ, không phát hiện hai nguồn mâu thuẫn | 0 |
+| 1 | `academic-regulations (0.6321)`; `registrar-policy-index (0.6004)`; `credit-transfer (0.5830)` | Gold doc ở hạng 1 nhưng sai section, không có `18-22 credits` | Agent trích các câu về concentration/chuyển tín chỉ, không trả lời giới hạn đăng ký | 0 |
+| 2 | `academic-regulations (0.6674)`; cùng doc `(0.6658)`; cùng doc `(0.6632)` | Hai chunk hạng 2–3 giữ đủ `30%` và `maximum of 18 credits` | Agent lấy đúng chủ đề withdrawal nhưng bỏ hai số bắt buộc; bằng chứng bị tách qua nhiều chunk | 1 |
+| 3 | `academic-regulations (0.7017)`; `credit-transfer (0.6233)`; `academic-regulations (0.6170)` | Gold doc hạng 2 nhưng top-3 không giữ đồng thời `50%` và `first week` | Agent trả nhầm mốc “one month after return”, thiếu giới hạn và thời điểm chuẩn | 0 |
+| 4 | `ueh-dang-ky-huy-hoc-phan (0.5580)`; cùng doc `(0.5375)`; cùng doc `(0.5074)` | Đúng tài liệu nhưng cả ba section đều thiếu câu gold về học phần chưa đóng học phí | Agent trả các quy định cùng chủ đề nhưng không trả lời đúng hậu quả | 0 |
+| 5 | `academic-regulations (0.7349)`; `leave-of-absence (0.6310)`; `credit-transfer (0.6296)` | Gold doc hạng 2 nhưng sai section; thiếu đồng thời mốc một tháng và một tuần | Agent trả nhầm quy định chuyển tín chỉ, không phát hiện hai nguồn mâu thuẫn | 0 |
 
-**Kết quả tổng:** `gold_doc_id` xuất hiện trong top-3 ở **5/5**, nhưng chỉ **2/5** query có
-chunk chứa bằng chứng trả lời (Q2 và Q4). Tổng rubric nghiêm ngặt là **2/10**. Chênh lệch này
+**Kết quả tổng:** `gold_doc_id` xuất hiện trong top-3 ở **5/5**, nhưng chỉ **1/5** query có
+đủ bằng chứng trả lời trong top-3 (Q2). Tổng rubric nghiêm ngặt là **1/10**. Chênh lệch này
 chứng minh đúng tài liệu chưa đủ: hệ thống có thể đưa đúng `doc_id` lên cả ba vị trí nhưng vẫn
 không lấy được section chứa đáp án.
 
 **A/B metadata filter:** Q2 được chạy hai lần với cùng query, corpus, embedder và strategy.
-Với `audience=student, institution=vinuni`, top-3 là hai chunk Academic Regulations và một
-chunk Leave of Absence; chunk đáp án nằm hạng 2. Không filter, top-3 đổi thành hai chunk VNUF
+Với `audience=student, institution=vinuni`, top-3 là ba chunk Academic Regulations; hai
+chunk hạng 2–3 ghép lại mới đủ đáp án. Không filter, top-3 đổi thành hai chunk VNUF
 và một chunk UEH, không còn quy định VinUni. Filter vì vậy giảm nhiễu đúng mục tiêu và là điều
 kiện cần để retrieval trả đúng đối tượng.
+
+### Đối chứng với RecursiveChunker
+
+Recursive được chạy với `chunk_size=400`; mọi biến khác giữ nguyên. Đây là đối chứng, còn
+HeadingChunker vẫn là strategy riêng của Role 2.
+
+| Chỉ số | Heading `max_chars=800` | Recursive `chunk_size=400` |
+|---|---:|---:|
+| Tổng số chunk | 318 | 598 |
+| Gold `doc_id` trong top-3 | 5/5 | 3/5 |
+| Rank Q1→Q5 | 1, 1, 2, 1, 2 | 1, 1, 6, 1, 9 |
+| Query có chunk đủ bằng chứng | 1/5 | 1/5 |
+| Rubric chunk-level | 1/10 | 1/10 |
+
+Heading tạo ít hơn 280 chunks nhưng vẫn đưa gold document vào top-3 cho cả 5 query, trong khi
+Q3 và Q5 của Recursive rơi xuống hạng 6 và 9. Tuy nhiên hai strategy cùng chỉ đạt 1/10 khi
+chấm bằng nội dung chunk và câu trả lời. Q2 là failure chung: các số `30%` và `18 credits`
+bị tách qua nhiều chunk, còn agent trích xuất không ghép đủ hai điều kiện. Điều này cho thấy
+Heading cải thiện rank tài liệu nhưng chưa giải quyết triệt để rank section/grounding.
 
 **Failure case tiêu biểu — Q5:** top-3 có đúng `vinuni-leave-of-absence` ở hạng 2, score
 `0.6310`, nhưng đó là section thủ tục không chứa mốc “at least one month before”; top-1 lại là
