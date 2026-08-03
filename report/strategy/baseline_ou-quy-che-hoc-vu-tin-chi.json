@@ -1,0 +1,43 @@
+{
+  "doc_id": "ou-quy-che-hoc-vu-tin-chi",
+  "chunk_size": 500,
+  "char_count": 38239,
+  "embedding_backend": "n/a — thống kê cấu trúc, không dùng embedding",
+  "comparison": {
+    "fixed_size": {
+      "count": 85,
+      "avg_length": 499.2823529411765,
+      "std_length": 6.5773439386425,
+      "min_length": 439,
+      "max_length": 500
+    },
+    "by_sentences": {
+      "count": 114,
+      "avg_length": 327.7631578947368,
+      "std_length": 175.7046116995335,
+      "min_length": 64,
+      "max_length": 1054
+    },
+    "recursive": {
+      "count": 81,
+      "avg_length": 470.1111111111111,
+      "std_length": 24.770552010675505,
+      "min_length": 394,
+      "max_length": 500
+    }
+  },
+  "sample_chunks": {
+    "fixed_size": [
+      "# Quy che hoc vu theo hoc che tin chi OU\n\nChương I \n\nNHỮNG\n\nQUY ĐỊNH CHUNG\n\nĐiều 1.\n\nPhạm vi điều chỉnh và đối tượng áp dụng\n\n1       Quy chế\n\nnày quy định việc đào tạo đại học và cao đẳng hệ chính quy theo hệ thống tín\n\nchỉ, bao gồm: tổ chức đào tạo; đánh giá kết quả học tập; xét và công nhận tốt\n\nnghiệp.\n\n2       Quy chế\n\nnày áp dụng đối với sinh viên các khoá đào tạo hệ chính quy ở trình độ đại học\n\nvà cao đẳng tại Trường Đại học Mở TP. Hồ Chí Minh thực hiện theo hình thức tích\n\nluỹ tín chỉ.\n",
+      " Minh thực hiện theo hình thức tích\n\nluỹ tín chỉ.\n\nĐiều 2. Chương\n\ntrình giáo dục đại học\n\n1.     Chương\n\ntrình giáo dục đại học của Trường Đại học Mở Tp. Hồ Chí Minh (sau đây gọi tắt\n\nlà chương trình) thể hiện mục tiêu giáo dục đại học, quy định chuẩn kiến thức,\n\nkỹ năng, phạm vi và cấu trúc nội dung giáo dục đại học phương pháp và hình thức\n\nđào tạo, cách thức đánh giá kết quả đào tạo đối với mỗi môn học, ngành học,\n\ntrình độ đào tạo của giáo dục đại học và cao đẳng.\n\n2.     Chương\n\ntrình được"
+    ],
+    "by_sentences": [
+      "# Quy che hoc vu theo hoc che tin chi OU\n\nChương I \n\nNHỮNG\n\nQUY ĐỊNH CHUNG\n\nĐiều 1. Phạm vi điều chỉnh và đối tượng áp dụng\n\n1       Quy chế\n\nnày quy định việc đào tạo đại học và cao đẳng hệ chính quy theo hệ thống tín\n\nchỉ, bao gồm: tổ chức đào tạo; đánh giá kết quả học tập; xét và công nhận tốt\n\nnghiệp. 2       Quy chế\n\nnày áp dụng đối với sinh viên các khoá đào tạo hệ chính quy ở trình độ đại học\n\nvà cao đẳng tại Trường Đại học Mở TP.",
+      "Hồ Chí Minh thực hiện theo hình thức tích\n\nluỹ tín chỉ. Điều 2. Chương\n\ntrình giáo dục đại học\n\n1."
+    ],
+    "recursive": [
+      "# Quy che hoc vu theo hoc che tin chi OU\n\nChương I \n\nNHỮNG\n\nQUY ĐỊNH CHUNG\n\nĐiều 1.\n\nPhạm vi điều chỉnh và đối tượng áp dụng\n\n1       Quy chế\n\nnày quy định việc đào tạo đại học và cao đẳng hệ chính quy theo hệ thống tín\n\nchỉ, bao gồm: tổ chức đào tạo; đánh giá kết quả học tập; xét và công nhận tốt\n\nnghiệp.\n\n2       Quy chế\n\nnày áp dụng đối với sinh viên các khoá đào tạo hệ chính quy ở trình độ đại học\n\nvà cao đẳng tại Trường Đại học Mở TP. Hồ Chí Minh thực hiện theo hình thức tích\n\nluỹ tín chỉ.",
+      "Điều 2. Chương\n\ntrình giáo dục đại học\n\n1.     Chương\n\ntrình giáo dục đại học của Trường Đại học Mở Tp. Hồ Chí Minh (sau đây gọi tắt\n\nlà chương trình) thể hiện mục tiêu giáo dục đại học, quy định chuẩn kiến thức,\n\nkỹ năng, phạm vi và cấu trúc nội dung giáo dục đại học phương pháp và hình thức\n\nđào tạo, cách thức đánh giá kết quả đào tạo đối với mỗi môn học, ngành học,\n\ntrình độ đào tạo của giáo dục đại học và cao đẳng.\n\n2.     Chương"
+    ]
+  }
+}
