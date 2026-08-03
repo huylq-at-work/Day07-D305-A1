@@ -1,0 +1,9 @@
+# backend=sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2
+# corpus=data/k3_university chunks=318 docs=318
+# queries=data/benchmark_queries.yaml top_k=3 branch=2A202601387_NguyenTienDat
+query_id,member_branch,strategy,params,n_chunks_total,rank_of_gold,hit_top3,top1_score,top1_doc_id,top3_doc_ids,rubric_score
+Q1,2A202601387_NguyenTienDat,heading,"max_level=2,max_chars=800",318,99,false,0.6321,vinuni-academic-regulations-undergrad::chunk_43,vinuni-academic-regulations-undergrad::chunk_43|vinuni-registrar-policy-index::chunk_4|vinuni-credit-transfer::chunk_2,0
+Q2,2A202601387_NguyenTienDat,heading,"max_level=2,max_chars=800",318,99,false,0.6674,vinuni-academic-regulations-undergrad::chunk_98,vinuni-academic-regulations-undergrad::chunk_98|vinuni-academic-regulations-undergrad::chunk_36|vinuni-academic-regulations-undergrad::chunk_37,0
+Q3,2A202601387_NguyenTienDat,heading,"max_level=2,max_chars=800",318,99,false,0.7017,vinuni-academic-regulations-undergrad::chunk_43,vinuni-academic-regulations-undergrad::chunk_43|vinuni-credit-transfer::chunk_2|vinuni-academic-regulations-undergrad::chunk_117,0
+Q4,2A202601387_NguyenTienDat,heading,"max_level=2,max_chars=800",318,99,false,0.5580,ueh-dang-ky-huy-hoc-phan::chunk_6,ueh-dang-ky-huy-hoc-phan::chunk_6|ueh-dang-ky-huy-hoc-phan::chunk_12|ueh-dang-ky-huy-hoc-phan::chunk_9,0
+Q5,2A202601387_NguyenTienDat,heading,"max_level=2,max_chars=800",318,99,false,0.7349,vinuni-academic-regulations-undergrad::chunk_43,vinuni-academic-regulations-undergrad::chunk_43|vinuni-leave-of-absence::chunk_5|vinuni-credit-transfer::chunk_1,0

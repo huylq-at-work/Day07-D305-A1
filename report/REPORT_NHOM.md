@@ -147,7 +147,47 @@ Nguồn: nhánh `2A202601203-NguyenChiHuong`, `scripts/custom_chunkers.py`.
 **Phạm Thị Liên (2A202601795)** — `RecursiveChunker` / `SentenceChunker`, có `bench.py` riêng.
 **Nguyễn Tiến Đạt (2A202601387)** — vai Benchmark & Evaluation Designer, có `bench.py`, `check.py`.
 
-> *Hai bạn chưa nộp CSV theo Contract C nên chưa có số liệu đối chiếu — xem mục "Còn thiếu".*
+### Chạy chéo: cùng chiến lược, khác `src/`
+
+Để tách biến "chiến lược" khỏi biến "cách lập trình", nhóm chạy **cùng một** `HeadingChunker`
+(`max_chars=800`), **cùng** corpus, **cùng** 5 câu hỏi — chỉ đổi `src/` của từng người. Bốn
+file CSV gộp bằng [`scripts/merge_benchmark.py`](../scripts/merge_benchmark.py) thành
+[`ALL.csv`](benchmark/ALL.csv) (25 dòng, 5 lần chạy).
+
+| Thành viên | Chiến lược | Chunk | **Điểm** |
+|---|---|--:|:-:|
+| Phạm Thị Liên | `heading` 800 | **321** | 8/10 |
+| Lê Quang Huy | `heading` 800 | 318 | 8/10 |
+| Nguyễn Chí Hướng | `heading` 800 | 318 | 8/10 |
+| Lê Quang Huy | `recursive` 500 | 456 | 6/10 |
+| **Nguyễn Tiến Đạt** | `heading` 800 | 318 | **0/10** |
+
+Hai kết quả bất thường, cả hai đều là **lỗi `src/` mà 42/42 test không bắt được**:
+
+**1. Đạt: 0/10 dù pass toàn bộ test.** Nguyên nhân nằm ở đúng một dòng trong `_make_record`:
+
+```python
+meta["doc_id"] = doc.id        # Đạt  — ghi đè
+metadata.setdefault("doc_id", doc.id)   # Hướng — giữ nguyên nếu đã có
+```
+
+`ingest.chunk_document()` đã đặt `metadata["doc_id"]` là id của **tài liệu cha**, còn `doc.id`
+lúc này là id của **chunk** (`vinuni-academic-regulations-undergrad::chunk_43`). Gán đè biến
+mọi `doc_id` thành id chunk, nên store báo *"318 chunk từ **318 tài liệu**"* và mọi phép đối
+chiếu `gold_doc_id` đều trượt. `delete_document()` cũng hỏng theo.
+
+Test không bắt được vì test tạo `Document` có `id` trùng luôn `doc_id` và `metadata` rỗng —
+trong ca đó gán đè cho kết quả y hệt `setdefault`.
+
+**2. Liên: 321 chunk thay vì 318** dù chạy cùng `HeadingChunker`. Vì
+`HeadingChunker._split_long_section()` gọi lại `RecursiveChunker` trong `src/chunking.py` của
+mỗi người, mà cách gộp mảnh của bạn ấy khác một chút (thêm dấu phân cách vào **đầu** mảnh,
+nhóm dùng cách nối bằng separator). Chênh 3 chunk, **không đổi điểm** — nhưng cho thấy
+"cùng chiến lược" vẫn không có nghĩa là "cùng kết quả" khi phần dùng chung nằm trong `src/`.
+
+> Ba bạn chưa tự chạy; các số trên do nhóm trưởng chạy hộ bằng `git worktree` với `src/` của
+> từng người trên cùng cây `main`. Bài tập 3.4 muốn **mỗi người tự chạy trên máy mình** —
+> đây là điểm nhóm chưa làm đúng quy trình, dù số liệu là thật.
 
 ### So Sánh Giữa Các Thành Viên
 
@@ -338,21 +378,25 @@ phần nào đến từ đâu. Con số nhỏ hơn nhưng nói được nhiều 
 
 ## Còn thiếu — cần cả nhóm hoàn tất
 
-1. **Hai bạn chưa nộp CSV theo Contract C.** Bảng so sánh hiện tại là so sánh giữa **các
-   tham số**, chưa phải giữa **các thành viên** như Bài tập 3.4 yêu cầu. Cả bốn `src/` đều
-   42/42 nên chạy được ngay:
+**Nguyễn Tiến Đạt — sửa `_make_record` trong `src/store.py`.** Đổi
+`meta["doc_id"] = doc.id` thành `meta.setdefault("doc_id", doc.id)`. Một dòng, và nó là khác
+biệt giữa **0/10 và 8/10**. Nhóm cố ý **không** tự sửa: `src/` là phần chấm 30 điểm cá nhân
+và báo cáo cá nhân của bạn phải mô tả đúng code của bạn.
 
-   ```bash
-   python scripts/run_benchmark.py --chunker heading --max-chars 800
-   ```
+**Phạm Thị Liên — sửa `delete_document` trong `src/store.py`.** Hiện chỉ so `record['id']`,
+trong khi chunk từ `ingest` có id dạng `"<doc_id>::chunk_N"`, nên xoá 0 chunk và trả `False`
+trên corpus thật. Cần khớp thêm `metadata['doc_id']`. Test không bắt được vì test dùng
+`Document` có `id` trùng `doc_id`. (Lý do không tự sửa: như trên.)
 
-2. **`scripts/custom_chunkers.py` chưa lên `main`.** Bạn Hướng mới đẩy báo cáo cá nhân, chưa
-   đẩy `HeadingChunker` — mà đó là **yêu cầu bắt buộc của K3** ("ít nhất một thành viên chunk
-   theo tiêu đề/mục") và cũng là chiến lược thắng trong bảng so sánh. Số liệu `heading` ở
-   Phần 2 hiện **chưa tái lập được trên `main`**.
+**Cả ba — tự chạy benchmark trên máy mình** rồi commit CSV vào nhánh của mình:
 
-3. **`report/2A202601203_NguyenChiHuong` không có đuôi `.md`** — không render được Markdown
-   khi nộp.
+```bash
+python scripts/run_benchmark.py --chunker heading --max-chars 800
+```
 
-4. **Bốn kiểu đặt tên báo cáo cá nhân khác nhau.** Quy ước đã ghi trong `TEAMMATES.md` là
-   `REPORT_CANHAN_<MSSV>.md`.
+Bài tập 3.4 yêu cầu mỗi người tự chạy. Số liệu trong bảng trên là thật, nhưng do nhóm trưởng
+chạy hộ bằng `git worktree` — đúng số liệu, sai quy trình.
+
+**Cả nhóm — sửa Contract B thành `gold_doc_ids` dạng danh sách.** Q3 và Q5 có đáp án ở hai
+tài liệu; hệ thống đưa nội dung đúng lên hạng 2 mà máy chấm vẫn cho 1 điểm thay vì 2. Sửa
+xong thì `heading` lên **10/10**. Đây là lỗi thước đo, không phải lỗi hệ thống.
