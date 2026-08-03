@@ -1,0 +1,158 @@
+{
+  "300": {
+    "n_chunks": 836,
+    "avg_length": 217.1,
+    "rubric_total": 6,
+    "rows": [
+      {
+        "query_id": "Q1",
+        "rank_doc": 1,
+        "rank_needle": 112,
+        "needle_score": 0.4642,
+        "pool_size": 468,
+        "top1_score": 0.6386,
+        "rubric": 2
+      },
+      {
+        "query_id": "Q2",
+        "rank_doc": 1,
+        "rank_needle": 1,
+        "needle_score": 0.6734,
+        "pool_size": 443,
+        "top1_score": 0.6734,
+        "rubric": 2
+      },
+      {
+        "query_id": "Q3",
+        "rank_doc": 9,
+        "rank_needle": 84,
+        "needle_score": 0.4437,
+        "pool_size": 468,
+        "top1_score": 0.702,
+        "rubric": 0
+      },
+      {
+        "query_id": "Q4",
+        "rank_doc": 1,
+        "rank_needle": 4,
+        "needle_score": 0.5406,
+        "pool_size": 40,
+        "top1_score": 0.6225,
+        "rubric": 2
+      },
+      {
+        "query_id": "Q5",
+        "rank_doc": 99,
+        "rank_needle": 5,
+        "needle_score": 0.6689,
+        "pool_size": 468,
+        "top1_score": 0.7687,
+        "rubric": 0
+      }
+    ]
+  },
+  "500": {
+    "n_chunks": 456,
+    "avg_length": 399.7,
+    "rubric_total": 6,
+    "rows": [
+      {
+        "query_id": "Q1",
+        "rank_doc": 1,
+        "rank_needle": 71,
+        "needle_score": 0.4641,
+        "pool_size": 250,
+        "top1_score": 0.6469,
+        "rubric": 2
+      },
+      {
+        "query_id": "Q2",
+        "rank_doc": 1,
+        "rank_needle": 2,
+        "needle_score": 0.6724,
+        "pool_size": 237,
+        "top1_score": 0.6743,
+        "rubric": 2
+      },
+      {
+        "query_id": "Q3",
+        "rank_doc": 6,
+        "rank_needle": 21,
+        "needle_score": 0.5271,
+        "pool_size": 250,
+        "top1_score": 0.7126,
+        "rubric": 0
+      },
+      {
+        "query_id": "Q4",
+        "rank_doc": 1,
+        "rank_needle": 4,
+        "needle_score": 0.5063,
+        "pool_size": 23,
+        "top1_score": 0.6064,
+        "rubric": 2
+      },
+      {
+        "query_id": "Q5",
+        "rank_doc": 5,
+        "rank_needle": 2,
+        "needle_score": 0.6311,
+        "pool_size": 250,
+        "top1_score": 0.7637,
+        "rubric": 0
+      }
+    ]
+  },
+  "800": {
+    "n_chunks": 267,
+    "avg_length": 684.0,
+    "rubric_total": 6,
+    "rows": [
+      {
+        "query_id": "Q1",
+        "rank_doc": 2,
+        "rank_needle": 45,
+        "needle_score": 0.4685,
+        "pool_size": 145,
+        "top1_score": 0.6776,
+        "rubric": 1
+      },
+      {
+        "query_id": "Q2",
+        "rank_doc": 1,
+        "rank_needle": 3,
+        "needle_score": 0.6683,
+        "pool_size": 137,
+        "top1_score": 0.6797,
+        "rubric": 2
+      },
+      {
+        "query_id": "Q3",
+        "rank_doc": 2,
+        "rank_needle": 2,
+        "needle_score": 0.6453,
+        "pool_size": 145,
+        "top1_score": 0.7179,
+        "rubric": 1
+      },
+      {
+        "query_id": "Q4",
+        "rank_doc": 1,
+        "rank_needle": 3,
+        "needle_score": 0.5421,
+        "pool_size": 13,
+        "top1_score": 0.5693,
+        "rubric": 2
+      },
+      {
+        "query_id": "Q5",
+        "rank_doc": 9,
+        "rank_needle": 3,
+        "needle_score": 0.6303,
+        "pool_size": 145,
+        "top1_score": 0.7728,
+        "rubric": 0
+      }
+    ]
+  }
+}
