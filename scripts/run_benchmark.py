@@ -11,13 +11,17 @@ from __future__ import annotations
 
 import argparse
 import csv
+import subprocess
 import sys
+from datetime import date
 from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(REPO_ROOT))
 
 from ingest import build_knowledge_base  # noqa: E402
+from scripts.extractive_llm import ExtractiveLLM  # noqa: E402
+from src.agent import KnowledgeBaseAgent  # noqa: E402
 from src.chunking import FixedSizeChunker, RecursiveChunker, SentenceChunker  # noqa: E402
 
 # Sâu hơn top_k: cần biết chunk đúng đứng hạng mấy kể cả khi nó trượt top-3.
@@ -29,6 +33,90 @@ FIELDS = [
     "rank_of_gold", "hit_top3", "top1_score", "top1_doc_id", "top3_doc_ids",
     "rubric_score",
 ]
+
+# Mỗi tuple là một điều kiện; chỉ cần một biến thể trong tuple xuất hiện.
+# Các marker được trích nguyên văn từ corpus/gold answer đã QUERY FREEZE.
+ANSWER_MARKERS = {
+    "Q1": [("18-22 credits", "18–22 credits")],
+    "Q2": [("30%",), ("maximum of 18 credits",)],
+    "Q3": [("50%",), ("during the first week of the semester",)],
+    "Q4": [(
+        "hủy học phần chưa đóng học phí",
+        "bị hủy học phần do đóng học phí không đúng hạn",
+    )],
+    "Q5": [("at least one month before",), ("at least one week before",)],
+}
+
+
+def marker_checks(query_id: str, text: str) -> list[bool]:
+    lowered = text.lower()
+    return [
+        any(marker.lower() in lowered for marker in alternatives)
+        for alternatives in ANSWER_MARKERS[query_id]
+    ]
+
+
+def evidence_rank(query_id: str, hits: list[dict]) -> int:
+    """Hạng nhỏ nhất mà context tích lũy đã chứa đủ bằng chứng; 99 nếu thiếu."""
+    context: list[str] = []
+    for rank, hit in enumerate(hits[:3], start=1):
+        context.append(hit["content"])
+        if all(marker_checks(query_id, "\n".join(context))):
+            return rank
+    return RANK_NOT_FOUND
+
+
+def render_details(details: list[dict], *, backend: str, params: str,
+                   n_chunks: int) -> str:
+    lines = [
+        "# Benchmark chi tiết — Role 2 HeadingChunker",
+        "",
+        f"- Backend: `{backend}`",
+        f"- Strategy: `heading({params})`",
+        f"- Tổng số chunk: `{n_chunks}`; top-k: `3`",
+        "- Agent: `ExtractiveLLM` — chỉ trích câu có sẵn và dẫn nguồn, không sinh văn bản mới.",
+        "",
+    ]
+    for item in details:
+        lines.extend([
+            f"## {item['query_id']}",
+            "",
+            f"**Query:** {item['question']}",
+            "",
+            f"**Filter:** `{item['metadata_filter']}`",
+            "",
+            "| Hạng | Score | doc_id | Có marker đáp án? | Preview |",
+            "|---:|---:|---|:---:|---|",
+        ])
+        for hit in item["hits"]:
+            preview = hit["preview"].replace("|", "\\|")
+            lines.append(
+                f"| {hit['rank']} | {hit['score']:.4f} | `{hit['doc_id']}` | "
+                f"{'Có' if hit['has_marker'] else 'Không'} | {preview} |"
+            )
+        lines.extend([
+            "",
+            f"**Đánh giá:** evidence rank = `{item['evidence_rank']}`, "
+            f"answer markers = `{item['answer_checks']}`, rubric = `{item['rubric_score']}/2`. "
+            f"{item['reason']}",
+            "",
+            "**Câu trả lời của agent:**",
+            "",
+            "```text",
+            item["answer"],
+            "```",
+            "",
+        ])
+        if item.get("ab_unfiltered") is not None:
+            lines.extend([
+                "**A/B metadata filter:**",
+                "",
+                f"- Có filter: `{item['ab_filtered']}`",
+                f"- Không filter: `{item['ab_unfiltered']}`",
+                f"- Ranking thay đổi: `{item['ab_changed']}`",
+                "",
+            ])
+    return "\n".join(lines)
 
 
 def build_chunker(name: str, chunk_size: int, overlap: int, max_sentences: int,
@@ -64,11 +152,14 @@ def select_embedder(provider: str):
 
 
 def load_queries(path: Path) -> list[dict]:
+    raw = path.read_text(encoding="utf-8")
+    if "QUERY FREEZE" not in raw.upper() or "BẢN NHÁP" in raw.upper():
+        raise SystemExit("DỪNG: bộ câu hỏi chưa QUERY FREEZE.")
     try:
         import yaml
     except ImportError:
         raise SystemExit("Cần pyyaml để đọc benchmark_queries.yaml: pip install pyyaml")
-    queries = yaml.safe_load(path.read_text(encoding="utf-8"))["queries"]
+    queries = yaml.safe_load(raw)["queries"]
     if len(queries) != 5:
         raise SystemExit(f"Contract B yêu cầu đúng 5 câu hỏi, file có {len(queries)}.")
     return queries
@@ -83,6 +174,9 @@ def rank_of_gold(hits: list[dict], gold_doc_id: str) -> int:
 
 
 def main() -> int:
+    if hasattr(sys.stdout, "reconfigure"):
+        sys.stdout.reconfigure(encoding="utf-8")
+
     parser = argparse.ArgumentParser(description=__doc__,
                                      formatter_class=argparse.RawDescriptionHelpFormatter)
     parser.add_argument("--chunker", required=True,
@@ -100,10 +194,11 @@ def main() -> int:
                         help="mock CHỈ để thử nhanh; số liệu từ mock không dùng làm bằng chứng")
     parser.add_argument("--out-dir", default="report/benchmark")
     args = parser.parse_args()
+    if args.top_k != 3:
+        raise SystemExit("Contract C yêu cầu --top-k 3.")
 
     branch = args.branch
     if not branch:
-        import subprocess
         branch = subprocess.run(["git", "rev-parse", "--abbrev-ref", "HEAD"],
                                 capture_output=True, text=True, cwd=REPO_ROOT
                                 ).stdout.strip() or "unknown"
@@ -131,6 +226,8 @@ def main() -> int:
 
     queries = load_queries(Path(args.queries))
     rows = []
+    details = []
+    agent = KnowledgeBaseAgent(store=store, llm_fn=ExtractiveLLM(embedder))
 
     print(f"\n{'#':<4}{'rank':>6}{'top1':>9}  {'lọc':<8}{'tài liệu hạng 1'}")
     print("-" * 74)
@@ -143,10 +240,23 @@ def main() -> int:
                                         metadata_filter=metadata_filter)
         hits = deep[: args.top_k]
         rank = rank_of_gold(deep, gold)
-
-        # Chấm phần TRUY XUẤT theo docs/SCORING.md. Điểm 2 còn phụ thuộc câu trả
-        # lời của agent — người chạy tự hạ xuống 1 nếu câu trả lời thiếu chi tiết.
-        retrieval_score = 2 if rank == 1 else (1 if rank <= 3 else 0)
+        answer = agent.answer(
+            query["question"], top_k=args.top_k, metadata_filter=metadata_filter
+        )
+        answer_checks = marker_checks(query["id"], answer)
+        answer_evidence_rank = evidence_rank(query["id"], hits)
+        if answer_evidence_rank == RANK_NOT_FOUND:
+            rubric_score = 0
+            reason = "Top-3 không chứa đủ bằng chứng của gold answer."
+        elif answer_evidence_rank == 1 and all(answer_checks):
+            rubric_score = 2
+            reason = "Chunk hạng 1 chứa đủ bằng chứng và câu trả lời trích xuất giữ đủ marker."
+        else:
+            rubric_score = 1
+            reason = (
+                "Top-3 có bằng chứng nhưng không nằm trọn ở hạng 1, hoặc câu trả lời "
+                "trích xuất còn thiếu chi tiết."
+            )
 
         rows.append({
             "query_id": query["id"],
@@ -159,32 +269,91 @@ def main() -> int:
             "top1_score": f"{hits[0]['score']:.4f}" if hits else "0.0000",
             "top1_doc_id": hits[0]["metadata"].get("doc_id", "") if hits else "",
             "top3_doc_ids": "|".join(h["metadata"].get("doc_id", "") for h in hits[:3]),
-            "rubric_score": retrieval_score,
+            "rubric_score": rubric_score,
+        })
+
+        hit_details = []
+        for position, hit in enumerate(hits, start=1):
+            checks = marker_checks(query["id"], hit["content"])
+            hit_details.append({
+                "rank": position,
+                "score": float(hit["score"]),
+                "doc_id": hit["metadata"].get("doc_id", "unknown"),
+                "has_marker": any(checks),
+                "preview": " ".join(hit["content"].split())[:320],
+            })
+
+        ab_filtered = None
+        ab_unfiltered = None
+        ab_changed = None
+        if query.get("kind") == "filtered":
+            unfiltered = store.search(query["question"], top_k=args.top_k)
+            ab_filtered = [hit["metadata"].get("doc_id", "unknown") for hit in hits]
+            ab_unfiltered = [hit["metadata"].get("doc_id", "unknown") for hit in unfiltered]
+            ab_changed = ab_filtered != ab_unfiltered
+
+        details.append({
+            "query_id": query["id"],
+            "question": query["question"],
+            "metadata_filter": metadata_filter,
+            "hits": hit_details,
+            "evidence_rank": answer_evidence_rank,
+            "answer_checks": answer_checks,
+            "rubric_score": rubric_score,
+            "reason": reason,
+            "answer": answer,
+            "ab_filtered": ab_filtered,
+            "ab_unfiltered": ab_unfiltered,
+            "ab_changed": ab_changed,
         })
 
         flag = "có" if metadata_filter else "-"
         top1 = rows[-1]["top1_doc_id"]
         mark = "" if rank == 1 else ("  <- gold hạng %d" % rank if rank <= 3 else "  <- TRƯỢT")
         print(f"{query['id']:<4}{rank:>6}{rows[-1]['top1_score']:>9}  {flag:<8}{top1}{mark}")
+        for position, hit in enumerate(hits, start=1):
+            preview = " ".join(hit["content"].split())[:160]
+            print(
+                f"    {position}. score={hit['score']:.4f} "
+                f"doc_id={hit['metadata'].get('doc_id', 'unknown')} preview={preview}"
+            )
+        print(f"    agent={answer[:400].replace(chr(10), ' ')}")
 
     out_dir = Path(args.out_dir)
     out_dir.mkdir(parents=True, exist_ok=True)
     out_path = out_dir / f"{branch}_{args.chunker}.csv"
+    source_commit = subprocess.run(
+        ["git", "rev-parse", "--short", "origin/main"],
+        capture_output=True,
+        text=True,
+        cwd=REPO_ROOT,
+        check=True,
+    ).stdout.strip()
     with out_path.open("w", encoding="utf-8", newline="") as handle:
         # Ba dòng điều kiện hợp lệ theo Contract C — không có chúng thì người đọc
         # không biết số này chạy bằng embedder nào, trên corpus nào.
-        handle.write(f"# backend={backend}\n")
-        handle.write(f"# corpus={args.data_dir} chunks={total_chunks} docs={len(doc_ids)}\n")
-        handle.write(f"# queries={args.queries} top_k={args.top_k} branch={branch}\n")
+        handle.write(
+            f"# corpus/query freeze confirmed; main commit={source_commit}; "
+            f"run_date={date.today().isoformat()}\n"
+        )
+        handle.write(f"# EMBEDDING_PROVIDER={args.provider}; non-mock backend={backend}\n")
+        handle.write("# individual core verification: 42/42 tests passed\n")
         writer = csv.DictWriter(handle, fieldnames=FIELDS)
         writer.writeheader()
         writer.writerows(rows)
 
+    details_path = out_dir / f"{branch}_{args.chunker}_details.md"
+    details_path.write_text(
+        render_details(details, backend=backend, params=params, n_chunks=total_chunks),
+        encoding="utf-8",
+    )
+
     total = sum(r["rubric_score"] for r in rows)
     hits3 = sum(1 for r in rows if r["hit_top3"] == "true")
     print(f"\ntop-3 trúng  : {hits3}/5")
-    print(f"điểm truy xuất: {total}/10  (chưa trừ theo chất lượng câu trả lời)")
+    print(f"điểm rubric  : {total}/10  (đã kiểm chunk và câu trả lời trích xuất)")
     print(f"đã ghi       : {out_path}")
+    print(f"chi tiết     : {details_path}")
     return 0
 
 

@@ -2,7 +2,8 @@
 
 > Nguồn máy đọc được: [`data/benchmark_queries.yaml`](../../data/benchmark_queries.yaml).
 > Corpus: [`data/k3_university/`](../../data/k3_university) (10 tài liệu).
-> Bản nháp của R4 trên corpus cá nhân — R3 chốt bộ chính thức của nhóm.
+> **QUERY FREEZE ngày 03/08/2026:** đây là bộ 5 câu chính thức của nhóm; không thay đổi
+> câu hỏi, gold answer, filter hoặc tài liệu chuẩn sau khi các strategy bắt đầu chạy.
 
 | # | Câu hỏi | Câu trả lời chuẩn (rút gọn) | Tài liệu / mục chứa thông tin |
 | :-: | :-- | :-- | :-- |
@@ -20,7 +21,7 @@ retrieval theo một kiểu riêng:
 | Câu | kind | Cái nó thật sự đo |
 | :-: | :-- | :-- |
 | Q1 | `fact` | Đường cơ sở. Đáp án nằm gọn trong một bảng. **Q1 mà trượt thì lỗi không nằm ở chiến lược chunking** — nhiều khả năng store rỗng hoặc embedder đang là mock. |
-| Q2 | `filtered` | Giá trị thật của `search_with_filter()`. Không lọc thì `vnuf-huong-dan-quy-che-tin-chi` (audience=faculty) là đối thủ mạnh: Điều 11 của nó dùng đúng cụm "rút bớt học phần" bằng tiếng Việt và nêu mốc 6–8 tuần — quy định của **trường khác**. Lọc `audience=student` loại nó cùng `vinuni-registrar-policy-index`. |
+| Q2 | `filtered` | Giá trị thật của `search_with_filter()`. Không lọc thì `vnuf-huong-dan-quy-che-tin-chi` (audience=faculty) là đối thủ mạnh: Điều 11 của nó dùng đúng cụm "rút bớt học phần" bằng tiếng Việt và nêu mốc 6–8 tuần — quy định của **trường khác**. Lọc `audience=student, institution=vinuni` loại tài liệu sai đối tượng/trường. |
 | Q3 | `multi_doc` | Trả lời trọn vẹn cần hai tài liệu: trần 50% có ở cả hai, nhưng mốc nộp hồ sơ chỉ có trong `vinuni-credit-transfer`. Đo được việc chunk quá lớn có nuốt mất mục *3.1 Timeline* không. |
 | Q4 | `paraphrase` | Câu hỏi dùng từ đời thường ("mất môn", "nộp tiền học"), văn bản dùng từ hành chính ("hủy học phần", "đóng học phí"). Gần như không trùng từ khóa — chỗ embedding phải hơn tìm kiếm từ khóa, hoặc chỗ nó gãy. |
 | Q5 | `edge` | Câu duy nhất mà một câu trả lời dứt khoát vẫn là câu trả lời **thiếu**. Retrieval tốt phải kéo cả hai tài liệu mâu thuẫn lên top-3. Agent trả lời "một tuần" hoặc "một tháng" mà không nêu mâu thuẫn thì chỉ đạt 1/2 điểm. |

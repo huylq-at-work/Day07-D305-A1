@@ -52,13 +52,36 @@ Chạy `ChunkingStrategyComparator().compare()` trên 2-3 tài liệu:
 
 | Tài liệu | Chiến lược (Strategy) | Số lượng Chunk | Độ dài trung bình | Giữ được ngữ cảnh không? |
 |-----------|----------|-------------|------------|-------------------|
-| | FixedSizeChunker (`fixed_size`) | | | |
-| | SentenceChunker (`by_sentences`) | | | |
-| | RecursiveChunker (`recursive`) | | | |
+| `ou-quy-che-hoc-vu-tin-chi` | `fixed_size` | 255 | 199.81 | Không ổn định: có ranh giới cắt giữa từ/câu |
+|  | `by_sentences` | 79 | 479.52 | Giữ câu nhưng có chunk dài tới 1,535 ký tự |
+|  | `recursive` | 228 | 164.88 | Khống chế kích thước, có thể mất tên điều |
+|  | `heading` | 47 | 817.53 | Giữ tiêu đề/điều khoản; section dài được chia tiếp |
+| `vinuni-academic-regulations-undergrad` | `fixed_size` | 459 | 199.72 | Có thể cắt ngang bảng hoặc điều khoản |
+|  | `by_sentences` | 152 | 449.85 | Giữ câu, độ dài dao động lớn |
+|  | `recursive` | 537 | 126.46 | Có nhiều mẩu rất ngắn, min 2 ký tự |
+|  | `heading` | 79 | 892.86 | Giữ heading nhưng một số section cùng chủ đề cạnh tranh nhau |
+| `vinuni-credit-transfer` | `fixed_size` | 34 | 199.79 | Độ dài đều nhưng không theo ranh giới mục |
+|  | `by_sentences` | 9 | 568.22 | Giữ câu, độ lệch 314.87 ký tự |
+|  | `recursive` | 39 | 130.10 | Có mẩu ngắn 22 ký tự |
+|  | `heading` | 5 | 1070.20 | Mỗi mục gần một đơn vị ngữ nghĩa hoàn chỉnh |
+
+Số liệu lấy từ `report/strategy/heading_comparison.json`, chạy sau khi bỏ YAML front matter,
+với baseline `chunk_size=200` và local multilingual embedder. Ví dụ đọc được về fixed-size
+cắt hỏng và heading giữ nguyên nằm trong `report/strategy/HEADING_COMPARISON.md`.
 
 ### Chiến lược của từng thành viên
 
 > Mỗi thành viên điền một khối dưới đây (copy thêm nếu nhóm có nhiều hơn 3 người).
+
+**Role 2 — Nguyễn Chí Hướng (`role2-strategy-lead`)**
+- **Loại chiến lược:** custom `HeadingChunker(max_level=2, max_chars=1200)`.
+- **Mô tả & lý do chọn:** Quy định học vụ được tổ chức theo Chương/Điều/Article nên heading
+  là ranh giới ngữ nghĩa tự nhiên. Mục dài được chia tiếp bằng `RecursiveChunker`, mục ngắn
+  được gộp với mục tiếp theo, phần trước heading không bị bỏ, và heading được đính lại vào
+  mọi mảnh con để giữ provenance/ngữ cảnh.
+- **Kết quả benchmark cá nhân:** 218 chunks; gold `doc_id` trong top-3 ở 5/5 nhưng chỉ 2/5
+  query có chunk chứa bằng chứng, tổng rubric nghiêm ngặt 2/10. Điều này cho thấy đúng document
+  không đồng nghĩa đúng section.
 
 **Thành viên 1 — [Tên]**
 - **Loại chiến lược:** [FixedSize / Sentence / Recursive / custom]
@@ -99,11 +122,11 @@ Chạy `ChunkingStrategyComparator().compare()` trên 2-3 tài liệu:
 
 | # | Câu hỏi (Query) | Câu trả lời chuẩn (Gold Answer) | Chunk nào chứa thông tin? |
 |---|-------|-------------------------------|--------------------------|
-| 1 | | | |
-| 2 | | | |
-| 3 | | | |
-| 4 | | | |
-| 5 | | | |
+| 1 | VinUni: tối đa bao nhiêu tín chỉ trong kỳ chính mà không cần Dean duyệt? | 22 tín chỉ; 18–22 là automatic overload, trên 22 cần Dean duyệt | `vinuni-academic-regulations-undergrad` — bảng Study load variation |
+| 2 | Withdraw muộn nhất khi nào và cả khóa tối đa bao nhiêu tín chỉ? | Trước khi hoàn thành quá 30% thời lượng; tối đa 18 tín chỉ | `vinuni-academic-regulations-undergrad` — Article 12 |
+| 3 | Chuyển tín chỉ tối đa bao nhiêu và nộp lúc nào? | Không quá 50%; nộp tuần đầu học kỳ | `vinuni-credit-transfer` — mục 3.1 và 3.2 |
+| 4 | Chưa đóng học phí có bị mất môn không? | Có; UEH hủy học phần chưa đóng học phí sau hạn | `ueh-dang-ky-huy-hoc-phan` — Điều 4/Điều 6 |
+| 5 | Xin quay lại sau bảo lưu trước bao lâu? | Quy trình ghi 1 tháng, Academic Regulations ghi 1 tuần; phải nêu mâu thuẫn | `vinuni-leave-of-absence` và `vinuni-academic-regulations-undergrad` |
 
 ### Tổng hợp chất lượng truy xuất của nhóm
 
@@ -118,7 +141,10 @@ Chạy `ChunkingStrategyComparator().compare()` trên 2-3 tài liệu:
 | 5 | | | | |
 
 **Lọc bằng metadata có giúp ích không? Ở câu hỏi nào?**
-> *Viết 2-3 câu:*
+> Có, rõ nhất ở Q2. Với `audience=student, institution=vinuni`, chunk Article 12 chứa đáp án
+> lên hạng 2. Khi bỏ filter, top-3 trở thành hai chunk VNUF và một chunk UEH, không còn quy
+> định VinUni. Filter giảm nhiễu giữa các trường nhưng không giải quyết được lỗi đúng tài
+> liệu/sai section, nên vẫn phải chấm bằng nội dung chunk thay vì chỉ `doc_id`.
 
 ---
 

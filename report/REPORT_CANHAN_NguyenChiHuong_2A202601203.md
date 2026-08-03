@@ -195,28 +195,29 @@ Chạy **5 câu hỏi đánh giá của nhóm** trên mã nguồn cá nhân củ
 `sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2`. Năm query lấy nguyên từ
 `data/benchmark_queries.yaml`. Chỉ biến strategy là HeadingChunker; việc đọc front matter,
 gắn metadata/`doc_id`/`chunk_index` và nạp store đều dùng lại `build_knowledge_base()` của
-`ingest.py`. File query hiện vẫn ghi bản nháp, chưa QUERY FREEZE, nên đây là kết quả cá nhân
-phục vụ CP5 và phân tích retrieval, chưa phải CSV benchmark chính thức của nhóm.
+`ingest.py`. Bộ câu hỏi đã **QUERY FREEZE ngày 03/08/2026** và benchmark chạy sau khi merge
+`origin/main` commit `9c708b6`. CSV chính thức nằm tại
+`report/benchmark/role2-strategy-lead_heading.csv`; bảng đầy đủ preview và câu trả lời nằm tại
+`report/benchmark/role2-strategy-lead_heading_details.md`.
 
-| # | Câu hỏi (Query) | Top-1 Chunk truy xuất được (tóm tắt) | Điểm Score | Có liên quan không? (Relevant) | Câu trả lời của Agent (tóm tắt) |
-|---|-------|--------------------------------|-------|-----------|------------------------|
-| 1 | VinUni được đăng ký tối đa bao nhiêu tín chỉ trong học kỳ chính? | `vnuf-huong-dan-quy-che-tin-chi` — Điều 10 về khối lượng học tập tối thiểu | `0.6936` | Không; sai trường, top-3 không có chuỗi `18–22 credits` | Context không đủ bằng chứng để trả lời giới hạn VinUni; không được suy đoán từ quy định VNUF/OU. |
-| 2 | Được withdraw muộn nhất khi nào và tối đa bao nhiêu tín chỉ? | `ueh-dang-ky-huy-hoc-phan` — Chương IV về lớp học phần bị hủy | `0.6715` | Có trong top-3; chunk hạng 3 chứa đủ `30%` và `maximum of 18 credits` | Có thể trả lời: trước 30% thời lượng học phần và tổng số tín chỉ rút tối đa là 18; tuy nhiên bằng chứng không đứng top-1. |
-| 3 | Chuyển tín chỉ từ trường cũ: tối đa bao nhiêu và nộp lúc nào? | `vinuni-academic-regulations-undergrad` — Điều 13 về chuyển tín chỉ | `0.7017` | Chưa đủ; top-3 có mốc `50%` nhưng thiếu chuỗi “during the first week of the semester” | Context chỉ đủ trả lời giới hạn 50%, chưa đủ căn cứ trả lời trọn vẹn thời điểm nộp. |
-| 4 | Chưa nộp học phí thì có bị mất môn không? | `vnuf-huong-dan-quy-che-tin-chi` — quy định rút học phần tuần 6–8 | `0.6430` | Không; top-3 không có câu UEH “hủy học phần chưa đóng học phí” | Context sai trường và thiếu hậu quả cần trả lời, nên agent phải báo không đủ thông tin. |
-| 5 | Sau bảo lưu phải xin quay lại trước bao lâu? | `vinuni-academic-regulations-undergrad` — Điều 13 về chuyển tín chỉ | `0.7349` | Không; gold document ở hạng 2 nhưng sai section, thiếu cả mốc 1 tháng và 1 tuần | Context không đủ để nêu hai quy định khác nhau; đúng `doc_id` ở một kết quả vẫn không bảo đảm đúng chunk. |
+| # | Top-3 theo thứ tự: `doc_id (score)` | Bằng chứng đáp án trong chunk | Câu trả lời agent và lý do | Rubric |
+|---|---|---|---|---:|
+| 1 | `registrar-policy-index (0.6536)`; `academic-regulations (0.6321)`; `credit-transfer (0.5830)` | Không chunk nào có `18-22 credits`; gold doc ở hạng 2 nhưng sai section | Agent trích các câu về concentration/chuyển tín chỉ, không trả lời giới hạn đăng ký | 0 |
+| 2 | `academic-regulations (0.6674)`; `academic-regulations (0.6658)`; `leave-of-absence (0.6623)` | Chunk hạng 2 giữ đủ `30%` và `maximum of 18 credits` | Agent lấy đúng chủ đề withdrawal nhưng bỏ hai số bắt buộc; bằng chứng không ở top-1 | 1 |
+| 3 | `academic-regulations (0.7017)`; `registrar-policy-index (0.6561)`; `credit-transfer (0.6233)` | Có gold doc hạng 3 nhưng top-3 không giữ đồng thời `50%` và `first week` | Agent trả nhầm mốc “one month after return”, thiếu giới hạn và thời điểm chuẩn | 0 |
+| 4 | `ueh-dang-ky-huy-hoc-phan (0.5074)`; cùng doc `(0.5002)`; cùng doc `(0.4904)` | Chunk hạng 2 có câu “bị hủy học phần do đóng học phí không đúng hạn” | Agent trích đúng hậu quả nhưng bằng chứng không đứng top-1 và thiếu điều kiện đầy đủ | 1 |
+| 5 | `academic-regulations (0.7349)`; `leave-of-absence (0.6310)`; `registrar-policy-index (0.6143)` | Gold doc ở hạng 2 nhưng sai section; thiếu cả mốc một tháng và một tuần | Agent trả nhầm quy định chuyển tín chỉ, không phát hiện hai nguồn mâu thuẫn | 0 |
 
-**Bao nhiêu câu hỏi trả về chunk có liên quan trong top-3?** 1 / 5 theo tiêu chí nghiêm ngặt
-“top-3 phải chứa đủ các chuỗi bằng chứng của gold answer”. Q2 đạt đủ hai marker nhưng ở hạng
-3; Q3 chỉ đạt một trong hai marker. Nếu chỉ chấm theo `gold_doc_id`, tài liệu chuẩn xuất hiện
-trong top-3 ở 3/5 câu (Q2, Q3, Q5). Chênh lệch `3/5` theo document và `1/5` theo chunk chứng
-minh rằng đánh giá theo `doc_id` có thể lạc quan hơn chất lượng retrieval thực tế.
+**Kết quả tổng:** `gold_doc_id` xuất hiện trong top-3 ở **5/5**, nhưng chỉ **2/5** query có
+chunk chứa bằng chứng trả lời (Q2 và Q4). Tổng rubric nghiêm ngặt là **2/10**. Chênh lệch này
+chứng minh đúng tài liệu chưa đủ: hệ thống có thể đưa đúng `doc_id` lên cả ba vị trí nhưng vẫn
+không lấy được section chứa đáp án.
 
 **A/B metadata filter:** Q2 được chạy hai lần với cùng query, corpus, embedder và strategy.
-Khi có `metadata_filter={"audience": "student"}`, top-3 lần lượt là UEH, VinUni và VinUni;
-chunk VinUni hạng 3 chứa đủ đáp án. Khi bỏ filter, top-3 đổi thành hai chunk VNUF và một chunk
-UEH, không còn chunk đáp án VinUni. Như vậy filter thực sự giảm nhiễu giữa các quy định học vụ
-có từ vựng gần nhau và là điều kiện cần để Q2 trả lời đúng đối tượng.
+Với `audience=student, institution=vinuni`, top-3 là hai chunk Academic Regulations và một
+chunk Leave of Absence; chunk đáp án nằm hạng 2. Không filter, top-3 đổi thành hai chunk VNUF
+và một chunk UEH, không còn quy định VinUni. Filter vì vậy giảm nhiễu đúng mục tiêu và là điều
+kiện cần để retrieval trả đúng đối tượng.
 
 **Failure case tiêu biểu — Q5:** top-3 có đúng `vinuni-leave-of-absence` ở hạng 2, score
 `0.6310`, nhưng đó là section thủ tục không chứa mốc “at least one month before”; top-1 lại là
@@ -225,10 +226,10 @@ các section VinUni có chủ đề gần nhau, trong khi heading chunk không o
 thời hạn chỉ có một cơ hội lọt top-k. Thay đổi đề xuất: gắn heading cha vào mọi mảnh recursive,
 thêm overlap nhỏ cho section dài và cân nhắc rerank theo marker/metadata sau bước cosine.
 
-**Giới hạn phần trả lời:** máy không có API LLM nên benchmark này dùng `demo_llm` để kiểm tra
-prompt/provenance, còn embedding là model local thật. Vì `demo_llm` chỉ trả preview prompt,
-tôi chấm retrieval dựa trên bằng chứng trong chunk và không tuyên bố đã đo chất lượng sinh câu
-trả lời của một LLM.
+**Giới hạn phần trả lời:** máy không có API LLM nên benchmark dùng `ExtractiveLLM`: công cụ
+local chọn các câu có sẵn trong context và gắn nguồn `[1]`, `[2]`, không sinh chữ mới. Vì vậy
+kết quả đo được grounding/provenance và khả năng giữ thông tin của chunk, nhưng không đại diện
+cho khả năng suy luận của một generative LLM. Báo cáo và output đều ghi rõ giới hạn này.
 
 **Điều hay nhất tôi học được từ thành viên khác / nhóm khác (qua demo):**
 > Tôi học được rằng benchmark tốt phải có nhiều kiểu câu hỏi và gold answer kiểm chứng được,
@@ -246,5 +247,5 @@ trả lời của một LLM.
 | Hướng tiếp cận của tôi (My Approach) | 10 / 10 |
 | Hoàn thiện code (Core Implementation — tests) | 30 / 30 |
 | Dự đoán độ tương tự (Similarity Predictions) | 5 / 5 |
-| Kết quả truy xuất của tôi (Competition Results) | 6 / 10 |
-| **Tổng phần cá nhân** | **56 / 60** |
+| Kết quả truy xuất của tôi (Competition Results) | 2 / 10 |
+| **Tổng phần cá nhân** | **52 / 60** |

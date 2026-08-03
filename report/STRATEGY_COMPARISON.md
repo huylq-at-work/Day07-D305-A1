@@ -8,6 +8,12 @@
 > ([`scripts/custom_chunkers.py`](../scripts/custom_chunkers.py)); các cấu hình còn lại chạy
 > bằng `RecursiveChunker` trong `src/chunking.py`.
 
+> **Lưu ý về thước đo:** bảng thử tham số bên dưới được tạo trước theo `rank_of_gold`
+> (`doc_id`) và chưa kiểm nội dung chunk/câu trả lời. Lượt chính thức của Role 2 với
+> `max_chars=1200` nạp 218 chunks, đạt 5/5 theo `doc_id` nhưng chỉ 2/10 theo rubric nghiêm
+> ngặt ở mức chunk. Vì vậy các mức 7/10–8/10 dưới đây chỉ là điểm retrieval theo tài liệu,
+> không được dùng thay cho điểm CP6 cuối cùng.
+
 ## Kết quả
 
 | Chiến lược | số chunk | dài TB | top-3 trúng | **điểm** | rank từng câu (Q1→Q5) |

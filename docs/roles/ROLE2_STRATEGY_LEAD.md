@@ -1,6 +1,9 @@
 # ROLE 2 — Chunking Strategy Lead (heading/section)
 
-**Người phụ trách:** *(chưa điền)* · **Branch:** `role2-strategy-lead`
+**Người phụ trách:** Nguyễn Chí Hướng — K3 · **Branch benchmark:** `role2-strategy-lead`
+
+> Nhánh Git cá nhân: `2A202601203-NguyenChiHuong`; Contract C dùng tên vai trò ổn định
+> `role2-strategy-lead` để R4 ghép kết quả giữa các thành viên.
 
 > Đọc [docs/plan.md](../plan.md) và [docs/CONTRACTS.md](../CONTRACTS.md) trước.
 > Mọi lệnh chạy từ gốc repo.

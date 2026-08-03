@@ -1,8 +1,8 @@
 # Bộ câu hỏi đánh giá — Bài tập 3.2, định dạng theo docs/CONTRACTS.md §2
 #
 # Corpus: data/k3_university/ (10 tài liệu, chủ đề học vụ / đăng ký học phần)
-# Trạng thái: BẢN NHÁP của R4 trên corpus cá nhân. Bộ chính thức của nhóm do R3 chốt
-#             trên corpus của R1; file này là đề xuất để R3 lấy làm điểm xuất phát.
+# Trạng thái: QUERY FREEZE — bộ 5 câu chính thức, xác nhận ngày 03/08/2026.
+# Không thay đổi câu hỏi, gold answer, filter hoặc tài liệu chuẩn sau mốc này.
 #
 # Mọi gold_answer dưới đây đã được đối chiếu trực tiếp với văn bản trong corpus.
 # Không câu nào suy đoán quy định của trường.
